@@ -24,8 +24,6 @@ scanning, Shannon entropy calculation, and Kullback-Leibler divergence to
 discover potential small open reading frames (ORFs) in genomic sequences
 without requiring prior annotation.
 
-## The Gap
-
 Most existing bioinformatics tools for codon usage bias analysis (like
 `coRdon` and `Biostrings`) are designed for analyzing **known** genes from
 annotated GTF/GFF files. They are not optimized for **discovery** in
@@ -36,11 +34,14 @@ large genomic regions.
 
 ## Features
 
-- **Sliding Window Entropy Scanning**: Efficiently scan millions of base pairs to find regions with unusual codon usage patterns
+- **Sliding Window Entropy Scanning**: Efficiently scan millions of base pairs
+to find regions with unusual codon usage patterns
 - **Shannon Entropy Calculation**: Measure the randomness of codon distributions
-- **Kullback-Leibler Divergence**: Compare regions to organism-specific codon usage profiles
+- **Kullback-Leibler Divergence**: Compare regions to organism-specific codon 
+usage profiles
 - **ORF Detection**: Find candidate open reading frames in low-entropy regions
-- **Reference Profile Creation**: Build organism-specific codon usage profiles from known genes
+- **Reference Profile Creation**: Build organism-specific codon usage profiles
+from known genes
 
 ## Installation
 

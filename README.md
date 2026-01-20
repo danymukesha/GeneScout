@@ -13,8 +13,6 @@ entropy scanning, Shannon entropy calculation, and Kullback-Leibler
 divergence to discover potential small open reading frames (ORFs) in
 genomic sequences without requiring prior annotation.
 
-## The Gap
-
 Most existing bioinformatics tools for codon usage bias analysis (like
 `coRdon` and `Biostrings`) are designed for analyzing **known** genes
 from annotated GTF/GFF files. They are not optimized for **discovery**
