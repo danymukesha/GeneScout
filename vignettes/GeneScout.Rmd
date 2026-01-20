@@ -1,0 +1,373 @@
+---
+title: "GeneScout: De Novo Small ORF Discovery"
+author: "Dany Mukesha"
+date: "`r Sys.Date()`"
+abstract: |
+  A toolkit to identify hidden genes in non-coding DNA using statistical 
+  information theory. It implements sliding window entropy scanning, 
+  Shannon entropy calculation, and Kullback-Leibler divergence to discover 
+  potential small open reading frames (ORFs) in genomic sequences without 
+  requiring prior annotation.
+output: 
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{GeneScout: De Novo Small ORF Discovery}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(GeneScout)
+```
+
+**The problem:** Even in well-studied genomes, large stretches of "junk" DNA
+actually contain small, hidden genes. These can be identified by looking for 
+patterns in codon usage using entropy analysis.
+
+- In non-coding DNA, codons appear randomly (high entropy)
+- In real genes, organisms prefer specific codons (low entropy)
+
+`GeneScout` provides tools to calculate codon usage profiles from known genes, 
+scan large genomic regions with a sliding window, identify regions with low 
+entropy (potential coding regions), and find candidate ORFs within those 
+regions
+
+# Installation
+
+```{r eval=FALSE}
+# install development version
+devtools::install_github("danymukesha/GeneScout")
+```
+
+# Quick start
+
+## Basic enthropy calculation
+
+First, calculate codon frequencies and Shannon entropy for a sequence:
+
+```{r}
+# Example sequence (biased codon usage)
+sequence1 <- "ATGATGATGATGATGATGTTATTATTATTATTATTATTACGCCGCCGCCGCCGCC"
+
+freqs <- calculate_codon_frequencies(sequence1)
+print(head(freqs[freqs > 0]))
+
+entropy <- calculate_shannon_entropy(freqs)
+print(paste("Shannon Entropy:", round(entropy, 3), "bits"))
+```
+
+## Create a reference profile
+
+For de novo discovery, create a reference profile from known genes:
+
+```{r}
+# Known gene sequences (would normally be from annotated genes)
+known_genes <- c(
+  "ATGATGATGATGCCGCCGCCGCCTTATTATTATTAG",
+  "ATGCCGCCGCCGCCATTATTATTAATGTTTTTTTTT",
+  "ATGTTTTTTTTTTTACGCCGCCGCCGCCGAGTAA"
+)
+
+# Create reference codon usage profile
+ref_profile <- create_reference_profile(known_genes, method = "mean")
+print(head(ref_profile[ref_profile > 0]))
+```
+
+## Sliding window scan
+
+Perform a genome-wide scan to find regions matching the reference profile:
+
+```{r}
+# Create a longer test sequence with embedded "gene-like" regions
+test_sequence <- paste0(
+  paste0(rep("ACGTACGTACGT", 30), collapse = ""),  # Random region
+  "ATGATGATGATGCCGCCGCCGCCTTATTATTATTA",       # Embedded ORF
+  paste0(rep("TGACTGACTGA", 30), collapse = ""), # Random region
+  "ATGCCGCCGCCGCCATTATTATTAATGTTTTTTTTTTAG",   # Another ORF
+  paste0(rep("GATCGATCGAT", 30), collapse = "") # Random region
+)
+
+
+# Scan with sliding window
+scan_result <- sliding_window_scan(
+  test_sequence,
+  window_size = 150,
+  step_size = 30,
+  reference_profile = ref_profile
+)
+
+# View results
+print(scan_result)
+```
+
+## Detect Entropy Peaks
+
+Identify regions with unusually low entropy:
+
+```{r}
+# Detect peaks in entropy profile
+peaks <- entropy_peak_detection(
+  scan_result,
+  metric = "shannon_entropy",
+  method = "quantile",
+  threshold = 0.1,
+  min_peak_width = 3
+)
+
+print(peaks)
+```
+
+## Find candidate ORFs
+
+Search for actual ORFs within the low-entropy peaks:
+
+```{r}
+# Find candidate ORFs
+candidates <- find_candidate_orfs(
+  test_sequence,
+  scan_result,
+  peaks,
+  min_orf_length = 60,
+  start_codons = c("ATG"),
+  stop_codons = c("TAA", "TAG", "TGA")
+)
+
+print(candidates)
+```
+
+## Visualize results
+
+Create plots to visualize entropy profiles and candidate ORFs:
+
+```{r fig.width=10, fig.height=5}
+# Plot entropy profile
+plot_entropy_profile(scan_result, 
+                     metric = "shannon_entropy",
+                     highlight_threshold = TRUE)
+```
+
+```{r fig.width=10, fig.height=5}
+# Plot with peaks highlighted
+plot_entropy_profile(scan_result, 
+                     peaks = peaks,
+                     metric = "shannon_entropy",
+                     show_peaks = TRUE)
+```
+
+```{r fig.width=10, fig.height=5}
+# Plot candidate ORFs
+plot_candidate_orfs(scan_result, candidates, peaks, metric = "shannon_entropy")
+```
+
+# Advanced usage
+
+## Comparative analysis
+
+Compare entropy profiles between different regions:
+
+```{r}
+# Create two different sequences
+seq_region1 <- paste(rep("ATGATGATG", 50), collapse = "")
+seq_region2 <- paste(rep("ACGTACGT", 50), collapse = "")
+
+# Scan both regions
+result1 <- sliding_window_scan(seq_region1, window_size = 100, step_size = 20)
+result2 <- sliding_window_scan(seq_region2, window_size = 100, step_size = 20)
+
+# Compare profiles
+compare_entropy_profiles(result1, result2, 
+                         labels = c("Gene-like region", "Random region"))
+```
+
+## Working with genomes
+
+For large genomes, process chromosome by chromosome:
+
+```{r eval=FALSE}
+# Read genome FASTA file (https://parasite.wormbase.org/index.html)
+genome <- read_fasta("../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa")
+
+# Extract known genes from GTF annotation file
+known_genes <- extract_known_genes(
+  gtf_file = "../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.canonical_geneset.gtf",
+  genome_fasta = "../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa",
+  feature_type = "gene",
+  min_length = 150,
+  max_genes = 1000
+)
+
+# Create reference profile from extracted genes
+ref_profile <- create_reference_profile(known_genes[1:11])
+
+# Process one chromosome
+chr_name <- names(genome)[1]
+chr_sequence <- as.character(genome[1])
+
+# Scan chromosome
+chr_scan <- sliding_window_scan(
+  chr_sequence,
+  window_size = 300,
+  step_size = 30,
+  reference_profile = ref_profile
+)
+
+# Detect peaks and find ORFs
+peaks <- entropy_peak_detection(chr_scan, threshold = 0.05)
+candidates <- find_candidate_orfs(chr_sequence, chr_scan, peaks)
+
+# Save results
+write.csv(candidates, paste0("candidates_", chr_name, ".csv"))
+```
+
+# Theory behind GeneScout
+
+## Shannon enthropy
+
+Shannon entropy measures the "surprise" or randomness of data:
+
+$$H = -\sum_{i=1}^{64} P(i) \log_2 P(i)$$
+
+Where $P(i)$ is the frequency of codon $i$.
+
+- **High entropy** (~6 bits): Random codon usage (non-coding DNA)
+- **Low entropy** (~3-4 bits): Biased codon usage (potential gene)
+
+## Kullback-Leibler divergance
+
+KL divergence measures how one distribution differs from another:
+
+$$D_{KL}(P \| Q) = \sum_{i} P(i) \log_2 \left( \frac{P(i)}{Q(i)} \right)$$
+
+Where $P(i)$ is the observed frequency and $Q(i)$ is the reference frequency.
+
+- **High KL**: Window differs from organism's typical codon usage
+- **Low KL**: Window matches organism's typical codon usage
+
+## Effective Number of Codons (ENC)
+
+ENC is another measure of codon usage bias:
+
+```{r}
+# Calculate ENC for different sequences
+seq_uniform <- paste(rep(c("ATG", "TTT", "CCC", "GGG", "AAA", "TTT"), 10), 
+                     collapse = "")
+seq_biased <- paste(rep("ATG", 60), collapse = "")
+
+freqs_uniform <- calculate_codon_frequencies(seq_uniform)
+freqs_biased <- calculate_codon_frequencies(seq_biased)
+
+enc_uniform <- calculate_enc(freqs_uniform)
+enc_biased <- calculate_enc(freqs_biased)
+
+print(paste("Uniform sequence ENC:", round(enc_uniform, 2)))
+print(paste("Biased sequence ENC:", round(enc_biased, 2)))
+```
+
+ENC ranges from 20 (extreme bias) to 61 (no bias).
+
+# Parameter tuning
+
+## Window size
+
+The choice of window size affects sensitivity:
+
+- **Small windows** (50-100 bp): Higher sensitivity, more noise
+- **Large windows** (300-500 bp): More stable, may miss small ORFs
+
+```{r}
+# Compare different window sizes
+windows <- c(100, 150, 300)
+
+results <- lapply(windows, function(ws) {
+  sliding_window_scan(test_sequence, window_size = ws, step_size = 30)
+})
+```
+
+## Step size
+
+Step size determines resolution:
+
+- **Small step** (10-20 bp): Fine-grained scan, slower
+- **Large step** (30-50 bp): Faster scan, may miss features
+
+## Threshold selection
+
+Use different methods to set entropy thresholds:
+
+```{r}
+# Quantile-based threshold
+peaks_quantile <- entropy_peak_detection(
+  scan_result, 
+  method = "quantile", 
+  threshold = 0.1
+)
+
+# Standard deviation-based threshold
+peaks_sd <- entropy_peak_detection(
+  scan_result, 
+  method = "sd", 
+  threshold = 1.5
+)
+```
+
+# Integration with RNA-Seq
+
+For validation, integrate with RNA-seq expression data:
+
+```{r eval=FALSE}
+# Load RNA-seq coverage data
+coverage <- readRDS("rnaseq_coverage.rds")
+
+# Add expression information to candidates
+candidates_with_expr <- dplyr::mutate(candidates,
+  mean_coverage = sapply(1:nrow(candidates), function(i) {
+    mean(coverage[candidates$start[i]:candidates$end[i]])
+  })
+)
+
+# Filter by expression
+expressed_candidates <- dplyr::filter(
+  candidates_with_expr,
+  mean_coverage > 5
+)
+```
+
+# Performance consideration
+
+For large genomes:
+
+1. **Process by chromosome**: Avoid loading entire genome into memory
+2. **Use parallel processing**: Scan different chromosomes in parallel
+3. **Optimize parameters**: Larger step sizes reduce computation
+4. **Filter early**: Exclude low-complexity regions before scanning
+
+```{r eval=FALSE}
+# Parallel scanning example
+library(parallel)
+library(foreach)
+library(doParallel)
+
+cl <- makeCluster(detectCores() - 1)
+registerDoParallel(cl)
+
+results <- foreach(chr = chromosome_names) %dopar% {
+  chr_seq <- as.character(genome[chr])
+  sliding_window_scan(chr_seq, window_size = 300, step_size = 30)
+}
+
+stopCluster(cl)
+```
+
+# References
+
+- Wright, F. (1990). The 'effective number of codons' used in a gene. *Gene*, 87(1), 23-29.
+- Sharp, P. M., & Li, W. H. (1987). The codon Adaptation Index-a measure of directional synonymous codon usage bias, and its potential applications. *Nucleic Acids Research*, 15(3), 1281-1295.
+
+# Session information
+
+```{r}
+sessionInfo()
+```
