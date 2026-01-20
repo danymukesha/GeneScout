@@ -1,0 +1,130 @@
+# GeneScout
+
+**GeneScout** is an R package for identifying hidden genes in non-coding
+DNA using statistical information theory. It implements sliding window
+entropy scanning, Shannon entropy calculation, and Kullback-Leibler
+divergence to discover potential small open reading frames (ORFs) in
+genomic sequences without requiring prior annotation.
+
+Most existing bioinformatics tools for codon usage bias analysis (like
+`coRdon` and `Biostrings`) are designed for analyzing **known** genes
+from annotated GTF/GFF files. They are not optimized for **discovery**
+in non-coding regions.
+
+**GeneScout fills this gap** by focusing on *de novo* small ORF
+discovery in large genomic regions.
+
+Here are the key features of the tool has:
+
+- **Sliding window entropy scanning**: This implementation efficiently
+  scan millions of base pairs to find regions with unusual codon usage
+  patterns
+- **Shannon entropy calculation**: This measures the randomness of codon
+  distributions
+- **Kullback-Leibler divergence**: Compare regions to organism-specific
+  codon usage profiles
+- **ORF setection**: Find candidate open reading frames in low-entropy
+  regions
+- **Reference profil creation**: By build organism-specific codon usage
+  profiles from known genes
+
+## Installation
+
+``` r
+# install development version
+devtools::install_github("danymukesha/GeneScout")
+```
+
+## Quick Start
+
+``` r
+library(GeneScout)
+
+# Create a reference profile from known genes
+known_genes <- c("ATGATGATG", "GCCGCCGCC", "TTATTATTA")
+ref_profile <- create_reference_profile(known_genes)
+
+# Scan a genomic sequence
+sequence <- paste(rep("ATGATGATGTTATTATTACGCCGCCGCC", 30), collapse = "")
+scan_result <- sliding_window_scan(
+  sequence,
+  window_size = 300,
+  step_size = 30,
+  reference_profile = ref_profile
+)
+
+# Detect entropy peaks
+peaks <- entropy_peak_detection(scan_result, threshold = 0.1)
+
+# Find candidate ORFs
+candidates <- find_candidate_orfs(sequence, scan_result, peaks)
+
+# Visualize results
+plot_candidate_orfs(scan_result, candidates, peaks)
+```
+
+## Theory
+
+### Shannon Entropy
+
+$$H = - \sum\limits_{i = 1}^{64}P(i)\log_{2}P(i)$$
+
+- **High entropy** (~6 bits): Random codon usage → non-coding DNA
+- **Low entropy** (~3-4 bits): Biased codon usage → potential gene
+
+### Kullback-Leibler Divergence
+
+$$D_{KL}(P \parallel Q) = \sum\limits_{i}P(i)\log_{2}\left( \frac{P(i)}{Q(i)} \right)$$
+
+Compares the observed codon distribution ($P$) to the reference
+distribution ($Q$).
+
+There are different use cases, few of them would be:
+
+1.  **De nove gene dscovery**: to find potential coding regions in
+    unannotated genomes
+2.  **Small ORF identification**: for discovering small peptides in
+    non-coding regions
+3.  **Comparative genomics**: comparing codon usage between organisms
+4.  **RNA-Seq integration**: validating candidate ORFs with expression
+    data
+5.  **Evolutionary studies**: to analze codon usage patterns across
+    lineages
+
+## Acknowledgments
+
+Built on top of Bioconductor’s excellent `Biostrings`, `coRdon`, and
+`ggplot2` packages.
+
+# Package index
+
+## All functions
+
+- [`calculate_codon_frequencies()`](calculate_codon_frequencies.md) :
+  Calculate Codon Frequencies
+- [`calculate_enc()`](calculate_enc.md) : Calculate Effective Number of
+  Codons (ENC)
+- [`calculate_kl_divergence()`](calculate_kl_divergence.md) : Calculate
+  Kullback-Leibler Divergence
+- [`calculate_rscu()`](calculate_rscu.md) : Calculate Relative
+  Synonymous Codon Usage (RSCU)
+- [`calculate_shannon_entropy()`](calculate_shannon_entropy.md) :
+  Calculate Shannon Entropy
+- [`compare_entropy_profiles()`](compare_entropy_profiles.md) : Compare
+  Entropy Profiles
+- [`create_reference_profile()`](create_reference_profile.md) : Create
+  Reference Codon Profile
+- [`entropy_peak_detection()`](entropy_peak_detection.md) : Detect
+  Entropy Peaks
+- [`extract_known_genes()`](extract_known_genes.md) : Extract Known
+  Genes from GTF/GFF File
+- [`find_candidate_orfs()`](find_candidate_orfs.md) : Find Candidate
+  ORFs
+- [`plot_candidate_orfs()`](plot_candidate_orfs.md) : Plot Candidate
+  ORFs
+- [`plot_entropy_profile()`](plot_entropy_profile.md) : Plot Entropy
+  Profile
+- [`read_fasta()`](read_fasta.md) : Read FASTA File
+- [`sliding_window_scan()`](sliding_window_scan.md) : Sliding Window
+  Entropy Scan
+

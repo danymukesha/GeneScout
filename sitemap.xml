@@ -1,0 +1,27 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/calculate_codon_frequencies.html</loc></url>
+<url><loc>/reference/calculate_enc.html</loc></url>
+<url><loc>/reference/calculate_kl_divergence.html</loc></url>
+<url><loc>/reference/calculate_rscu.html</loc></url>
+<url><loc>/reference/calculate_shannon_entropy.html</loc></url>
+<url><loc>/reference/compare_entropy_profiles.html</loc></url>
+<url><loc>/reference/create_reference_profile.html</loc></url>
+<url><loc>/reference/dot-adjust_codon_length.html</loc></url>
+<url><loc>/reference/dot-get_all_codons.html</loc></url>
+<url><loc>/reference/dot-get_window_coords.html</loc></url>
+<url><loc>/reference/dot-parse_gtf_line.html</loc></url>
+<url><loc>/reference/dot-validate_dna.html</loc></url>
+<url><loc>/reference/entropy_peak_detection.html</loc></url>
+<url><loc>/reference/extract_known_genes.html</loc></url>
+<url><loc>/reference/find_candidate_orfs.html</loc></url>
+<url><loc>/reference/find_orfs_in_sequence.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/plot_candidate_orfs.html</loc></url>
+<url><loc>/reference/plot_entropy_profile.html</loc></url>
+<url><loc>/reference/read_fasta.html</loc></url>
+<url><loc>/reference/sliding_window_scan.html</loc></url>
+</urlset>
+
