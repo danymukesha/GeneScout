@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# GeneScout
+# GeneScout <a href="https://danymukesha.github.io/GeneScout/"><img src="man/figures/logo.png" align="right" height="139" alt="GeneScout website" /></a>
 
 <!-- badges: start -->
 
@@ -21,17 +21,18 @@ in non-coding regions.
 **GeneScout fills this gap** by focusing on *de novo* small ORF
 discovery in large genomic regions.
 
-## Features
+Here are the key features of the tool has:
 
-- **Sliding Window Entropy Scanning**: Efficiently scan millions of base
-  pairs to find regions with unusual codon usage patterns
-- **Shannon Entropy Calculation**: Measure the randomness of codon
+- **Sliding window entropy scanning**: This implementation efficiently
+  scan millions of base pairs to find regions with unusual codon usage
+  patterns
+- **Shannon entropy calculation**: This measures the randomness of codon
   distributions
-- **Kullback-Leibler Divergence**: Compare regions to organism-specific
+- **Kullback-Leibler divergence**: Compare regions to organism-specific
   codon usage profiles
-- **ORF Detection**: Find candidate open reading frames in low-entropy
+- **ORF setection**: Find candidate open reading frames in low-entropy
   regions
-- **Reference Profile Creation**: Build organism-specific codon usage
+- **Reference profil creation**: By build organism-specific codon usage
   profiles from known genes
 
 ## Installation
@@ -69,42 +70,6 @@ candidates <- find_candidate_orfs(sequence, scan_result, peaks)
 plot_candidate_orfs(scan_result, candidates, peaks)
 ```
 
-<!-- ## Core Functions -->
-
-<!-- ### Entropy Analysis -->
-
-<!-- - `calculate_codon_frequencies()` - Calculate codon usage frequencies -->
-
-<!-- - `calculate_shannon_entropy()` - Calculate Shannon entropy -->
-
-<!-- - `calculate_kl_divergence()` - Calculate KL divergence -->
-
-<!-- - `calculate_rscu()` - Calculate Relative Synonymous Codon Usage -->
-
-<!-- - `calculate_enc()` - Calculate Effective Number of Codons -->
-
-<!-- ### Discovery -->
-
-<!-- - `read_fasta()` - Read DNA sequences from FASTA files -->
-
-<!-- - `extract_known_genes()` - Extract gene sequences from GTF/GFF annotations -->
-
-<!-- - `create_reference_profile()` - Create organism-specific reference profile -->
-
-<!-- - `sliding_window_scan()` - Main scanning function -->
-
-<!-- - `entropy_peak_detection()` - Detect entropy peaks -->
-
-<!-- - `find_candidate_orfs()` - Find candidate ORFs -->
-
-<!-- ### Visualization -->
-
-<!-- - `plot_entropy_profile()` - Plot entropy profiles -->
-
-<!-- - `compare_entropy_profiles()` - Compare multiple profiles -->
-
-<!-- - `plot_candidate_orfs()` - Visualize candidate ORFs -->
-
 ## Theory
 
 ### Shannon Entropy
@@ -121,16 +86,16 @@ $$D_{KL}(P \| Q) = \sum_{i} P(i) \log_2 \left( \frac{P(i)}{Q(i)} \right)$$
 Compares the observed codon distribution ($P$) to the reference
 distribution ($Q$).
 
-## Use Cases
+There are different use cases, few of them would be:
 
-1.  **De Novo Gene Discovery**: Find potential coding regions in
+1.  **De nove gene dscovery**: to find potential coding regions in
     unannotated genomes
-2.  **Small ORF Identification**: Discover small peptides in non-coding
-    regions
-3.  **Comparative Genomics**: Compare codon usage between organisms
-4.  **RNA-Seq Integration**: Validate candidate ORFs with expression
+2.  **Small ORF identification**: for discovering small peptides in
+    non-coding regions
+3.  **Comparative genomics**: comparing codon usage between organisms
+4.  **RNA-Seq integration**: validating candidate ORFs with expression
     data
-5.  **Evolutionary Studies**: Analyze codon usage patterns across
+5.  **Evolutionary studies**: to analze codon usage patterns across
     lineages
 
 ## Acknowledgments
