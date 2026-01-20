@@ -188,7 +188,8 @@ calculate_enc <- function(frequencies) {
         "TTC" = "F", "TTT" = "F", "TTA" = "L", "TTG" = "L",
         "TAC" = "Y", "TAT" = "Y",
         "TGC" = "C", "TGT" = "C",
-        "TGG" = "W", "ATG" = "M"
+        "TGG" = "W", "ATG" = "M",
+        "TAA" = "*", "TAG" = "*", "TGA" = "*"
     )
 
     all_codons <- .get_all_codons()
@@ -208,6 +209,9 @@ calculate_enc <- function(frequencies) {
         if (length(aa_freqs) > 0) {
             aa_entropy <- -sum(aa_freqs / sum(aa_freqs) * log2(aa_freqs / sum(aa_freqs)))
             n_codons <- length(aa_codons)
+            print(n_codons)
+
+            print(paste("enc:", enc_sum, "entro:", aa_entropy))
 
             if (n_codons > 1) {
                 enc_sum <- enc_sum + aa_entropy / log2(n_codons)
