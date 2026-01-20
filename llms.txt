@@ -128,3 +128,8 @@ Built on top of Bioconductor’s excellent `Biostrings`, `coRdon`, and
 - [`sliding_window_scan()`](sliding_window_scan.md) : Sliding Window
   Entropy Scan
 
+# Articles
+
+### All vignettes
+
+- [GeneScout: De Novo Small ORF Discovery](GeneScout.md):

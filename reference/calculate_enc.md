@@ -25,10 +25,4 @@ Numeric value of ENC
 sequence <- "ATGATGATGTTATTATTACGCCGCCGCC"
 freqs <- calculate_codon_frequencies(sequence)
 enc <- calculate_enc(freqs)
-#> [1] 6
-#> [1] "enc: 0 entro: 0"
-#> [1] 6
-#> [1] "enc: 0 entro: 0"
-#> [1] 1
-#> [1] "enc: 0 entro: 0"
 ```
