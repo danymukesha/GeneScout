@@ -24,7 +24,8 @@ Imports:
     dplyr,
     tidyr,
     stringr,
-    scales
+    scales,
+    rtracklayer
 Suggests:
     testthat (>= 3.0.0),
     knitr,
@@ -41,3 +42,4 @@ biocViews:
     Software
 URL: https://github.com/danymukesha/GeneScout
 BugReports: https://github.com/danymukesha/GeneScout/issues
+
