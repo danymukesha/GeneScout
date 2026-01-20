@@ -1,0 +1,43 @@
+Package: GeneScout
+Title: De Novo Small ORF Discovery Using Entropy Analysis
+Version: 0.1.0
+Date: 2026-01-20
+Authors@R: 
+    person("Dany", "Mukesha", , "danymukesha@gmail.com", 
+            role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0001-9514-751X"))
+Description: A toolkit for identifying hidden genes in non-coding DNA using
+    statistical information theory. Implements sliding window entropy scanning,
+    Shannon entropy calculation, and Kullback-Leibler divergence to discover
+    potential small open reading frames (ORFs) in genomic sequences without 
+    requiring prior annotation. Fills the gap between existing codon usage 
+    bias tools and de novo gene discovery in non-coding regions.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.3.0)
+Imports:
+    Biostrings,
+    ggplot2,
+    dplyr,
+    tidyr,
+    stringr,
+    scales
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    BiocStyle,
+    BSgenome.Ecoli.NCBI.20080805,
+    rtracklayer
+VignetteBuilder: knitr
+biocViews: 
+    Sequencing,
+    Genetics,
+    GenePrediction,
+    FunctionalGenomics,
+    Software
+URL: https://github.com/danymukesha/GeneScout
+BugReports: https://github.com/danymukesha/GeneScout/issues

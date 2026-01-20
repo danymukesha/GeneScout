@@ -1,0 +1,62 @@
+# Export all main functions
+export(calculate_codon_frequencies)
+export(calculate_shannon_entropy)
+export(calculate_kl_divergence)
+export(calculate_rscu)
+export(calculate_enc)
+export(read_fasta)
+export(extract_known_genes)
+export(create_reference_profile)
+export(sliding_window_scan)
+export(entropy_peak_detection)
+export(find_candidate_orfs)
+export(plot_entropy_profile)
+export(compare_entropy_profiles)
+export(plot_candidate_orfs)
+
+# Import from Biostrings
+importFrom(Biostrings, readDNAStringSet)
+importFrom(Biostrings, DNAStringSet)
+importFrom(Biostrings, DNAString)
+importFrom(Biostrings, width)
+importFrom(Biostrings, toString)
+importFrom(Biostrings, subseq)
+importFrom(Biostrings, oligonucleotideFrequency)
+importFrom(Biostrings, translate)
+
+# Import from ggplot2
+importFrom(ggplot2, ggplot)
+importFrom(ggplot2, aes)
+importFrom(ggplot2, geom_line)
+importFrom(ggplot2, geom_point)
+importFrom(ggplot2, geom_hline)
+importFrom(ggplot2, geom_vline)
+importFrom(ggplot2, labs)
+importFrom(ggplot2, theme_minimal)
+importFrom(ggplot2, scale_color_manual)
+importFrom(ggplot2, scale_fill_manual)
+importFrom(ggplot2, coord_cartesian)
+
+# Import from dplyr
+importFrom(dplyr, mutate)
+importFrom(dplyr, filter)
+importFrom(dplyr, arrange)
+importFrom(dplyr, desc)
+importFrom(dplyr, select)
+importFrom(dplyr, summarise)
+importFrom(dplyr, group_by)
+
+# Import from tidyr
+importFrom(tidyr, pivot_longer)
+
+# Import from stringr
+importFrom(stringr, str_extract_all)
+importFrom(stringr, str_replace)
+
+# Import from rtracklayer (suggested package)
+importFrom(rtracklayer, import)
+
+# S3 methods
+S3method(print, entropy_scan_result)
+S3method(summary, entropy_scan_result)
+S3method(plot, entropy_scan_result)
