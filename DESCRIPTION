@@ -21,6 +21,7 @@ Depends: R (>= 4.3.0)
 Imports:
     Biostrings,
     ggplot2,
+    ggrepel,
     dplyr,
     tidyr,
     stringr,
@@ -42,4 +43,5 @@ biocViews:
     Software
 URL: https://github.com/danymukesha/GeneScout
 BugReports: https://github.com/danymukesha/GeneScout/issues
+
 
