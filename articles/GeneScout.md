@@ -2,11 +2,25 @@
 
 Abstract
 
-A toolkit to identify hidden genes in non-coding DNA using statistical
-information theory. It implements sliding window entropy scanning,
-Shannon entropy calculation, and Kullback-Leibler divergence to discover
-potential small open reading frames (ORFs) in genomic sequences without
-requiring prior annotation.
+Hidden small open reading frames (sORFs) within non-coding genomic
+regions represent an underexplored layer of gene regulation and
+functional potential. Several Bioconductor/R packages, including
+Biostrings and coRdon, provide robust tools for sequence manipulation
+and codon usage bias analysis; however, these methods are primarily
+designed for annotated genes and assume prior knowledge of gene
+coordinates. Consequently, they are not optimized for the systematic
+exploration of large, unannotated genomic regions.
+
+GeneScout addresses this methodological gap by enabling de novo sORF
+discovery directly from raw genomic sequences. The package implements
+sliding window–based entropy scanning, Shannon entropy estimation, and
+Kullback–Leibler divergence to quantify local codon usage bias without
+requiring GTF or GFF annotations. In addition, GeneScout supports
+comparative visualization of entropy profiles and integration with
+RNA-Seq data to prioritize biologically relevant candidates. By
+automating these analyses across large genomic intervals, GeneScout
+facilitates the identification of previously overlooked coding regions
+within non-coding DNA.
 
 **The problem:** Even in well-studied genomes, large stretches of “junk”
 DNA actually contain small, hidden genes. These can be identified by
@@ -18,7 +32,7 @@ looking for patterns in codon usage using entropy analysis.
 `GeneScout` provides tools to calculate codon usage profiles from known
 genes, scan large genomic regions with a sliding window, identify
 regions with low entropy (potential coding regions), and find candidate
-ORFs within those regions
+ORFs within those regions.
 
 ## Installation
 

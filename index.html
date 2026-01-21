@@ -13,7 +13,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="De Novo Small ORF Discovery with Entropy Analysis">
 <meta name="description" content="A toolkit for identifying hidden genes in non-coding DNA using statistical information theory. Implements sliding window entropy scanning, Shannon entropy calculation, and Kullback-Leibler divergence to discover potential small open reading frames (ORFs) in genomic sequences without requiring prior annotation. Fills the gap between existing codon usage bias tools and de novo gene discovery in non-coding regions.">
 <meta property="og:description" content="A toolkit for identifying hidden genes in non-coding DNA using statistical information theory. Implements sliding window entropy scanning, Shannon entropy calculation, and Kullback-Leibler divergence to discover potential small open reading frames (ORFs) in genomic sequences without requiring prior annotation. Fills the gap between existing codon usage bias tools and de novo gene discovery in non-coding regions.">
-<meta property="og:image" content="/logo.png">
+<meta property="og:image" content="https://danymukesha.github.io/GeneScout/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">GeneScout</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,6 +40,7 @@
 <li><a class="dropdown-item" href="articles/GeneScout_on_APOE-and-chr19.html">GeneScout on APOE and chr19</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -61,21 +62,32 @@
 </div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p><strong>GeneScout</strong> is an R package for identifying hidden genes in non-coding DNA using statistical information theory. It implements sliding window entropy scanning, Shannon entropy calculation, and Kullback-Leibler divergence to discover potential small open reading frames (ORFs) in genomic sequences without requiring prior annotation.</p>
+<p><strong>GeneScout</strong> is an R package for identifying hidden genes in non-coding DNA using statistical information theory. It implements sliding window entropy scanning, Shannon entropy estimation, and Kullback–Leibler divergence to discover potential small open reading frames (sORFs) directly from genomic sequences without requiring prior annotation.</p>
+<!-- Most existing bioinformatics tools for codon usage analysis, such as -->
+<!-- **coRdon**, are designed to operate on *known* protein-coding genes derived -->
+<!-- from annotated GTF or GFF files. Core infrastructure packages such as -->
+<!-- **Biostrings** provide efficient manipulation of biological sequences but do -->
+<!-- not offer functionality for genome-wide *de novo* discovery of coding regions. -->
+<!-- Consequently, these tools are not optimized for systematic exploration of -->
+<!-- large, unannotated genomic regions. -->
 <p>Most existing bioinformatics tools for codon usage bias analysis (like <code>coRdon</code> and <code>Biostrings</code>) are designed for analyzing <strong>known</strong> genes from annotated GTF/GFF files. They are not optimized for <strong>discovery</strong> in non-coding regions.</p>
+<!-- **GeneScout fills this methodological gap** by focusing on *de novo* small ORF -->
+<!-- discovery through statistical modeling of local codon usage patterns in large -->
+<!-- genomic regions. -->
 <p><strong>GeneScout fills this gap</strong> by focusing on <em>de novo</em> small ORF discovery in large genomic regions.</p>
 <p>Here are the key features of the tool has:</p>
 <ul>
 <li>
 <strong>Sliding window entropy scanning</strong>: This implementation efficiently scan millions of base pairs to find regions with unusual codon usage patterns</li>
 <li>
-<strong>Shannon entropy calculation</strong>: This measures the randomness of codon distributions</li>
+<strong>Shannon entropy calculation</strong>: This quantifies the randomness of codon distributions within genomic windows.</li>
 <li>
-<strong>Kullback-Leibler divergence</strong>: Compare regions to organism-specific codon usage profiles</li>
+<strong>Kullback-Leibler divergence</strong>: Compare regions to organism-specific codon usage profiles. <!-- Compares local codon usage to organism-specific reference profiles -->
+</li>
 <li>
-<strong>ORF setection</strong>: Find candidate open reading frames in low-entropy regions</li>
+<strong>ORF detection</strong>: Identifies candidate open reading frames within low-entropy regions</li>
 <li>
-<strong>Reference profil creation</strong>: By build organism-specific codon usage profiles from known genes</li>
+<strong>Reference profile construction</strong> Builds organism-specific codon usage profiles from known coding sequences</li>
 </ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -123,7 +135,7 @@
 <li>
 <strong>High entropy</strong> (~6 bits): Random codon usage → non-coding DNA</li>
 <li>
-<strong>Low entropy</strong> (~3-4 bits): Biased codon usage → potential gene</li>
+<strong>Low entropy</strong> (~3-4 bits): Biased codon usage → potential gene/coding regions</li>
 </ul>
 </div>
 <div class="section level3">
@@ -134,7 +146,7 @@
 <p>There are different use cases, few of them would be:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong>De nove gene dscovery</strong>: to find potential coding regions in unannotated genomes</li>
+<strong>De novo gene discovery</strong>: to find potential coding regions in unannotated genomes</li>
 <li>
 <strong>Small ORF identification</strong>: for discovering small peptides in non-coding regions</li>
 <li>
@@ -149,7 +161,7 @@
 <div class="section level2">
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
 </h2>
-<p>Built on top of Bioconductor’s excellent <code>Biostrings</code>, <code>coRdon</code>, and <code>ggplot2</code> packages.</p>
+<p>Built on top of Bioconductor’s excellent <code>Biostrings</code>, and <code>coRdon</code> packages. <!-- GeneScout builds upon Bioconductor infrastructure, particularly --> <!-- Biostrings for sequence manipulation and coRdon for codon usage --> <!-- bias methodology. --></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -178,7 +190,8 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Dany Mukesha <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0009-0001-9514-751X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>
+<a href="https://danymukesha.github.io/" class="external-link">Dany Mukesha</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0009-0001-9514-751X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
@@ -189,7 +202,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Dany Mukesha.</p>
+  <p>Developed by <a href="https://danymukesha.github.io/" class="external-link">Dany Mukesha</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

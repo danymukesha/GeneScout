@@ -2,9 +2,9 @@
 
 **GeneScout** is an R package for identifying hidden genes in non-coding
 DNA using statistical information theory. It implements sliding window
-entropy scanning, Shannon entropy calculation, and Kullback-Leibler
-divergence to discover potential small open reading frames (ORFs) in
-genomic sequences without requiring prior annotation.
+entropy scanning, Shannon entropy estimation, and Kullback–Leibler
+divergence to discover potential small open reading frames (sORFs)
+directly from genomic sequences without requiring prior annotation.
 
 Most existing bioinformatics tools for codon usage bias analysis (like
 `coRdon` and `Biostrings`) are designed for analyzing **known** genes
@@ -19,14 +19,14 @@ Here are the key features of the tool has:
 - **Sliding window entropy scanning**: This implementation efficiently
   scan millions of base pairs to find regions with unusual codon usage
   patterns
-- **Shannon entropy calculation**: This measures the randomness of codon
-  distributions
+- **Shannon entropy calculation**: This quantifies the randomness of
+  codon distributions within genomic windows.
 - **Kullback-Leibler divergence**: Compare regions to organism-specific
-  codon usage profiles
-- **ORF setection**: Find candidate open reading frames in low-entropy
-  regions
-- **Reference profil creation**: By build organism-specific codon usage
-  profiles from known genes
+  codon usage profiles.
+- **ORF detection**: Identifies candidate open reading frames within
+  low-entropy regions
+- **Reference profile construction** Builds organism-specific codon
+  usage profiles from known coding sequences
 
 ## Installation
 
@@ -70,7 +70,8 @@ plot_candidate_orfs(scan_result, candidates, peaks)
 $$H = - \sum\limits_{i = 1}^{64}P(i)\log_{2}P(i)$$
 
 - **High entropy** (~6 bits): Random codon usage → non-coding DNA
-- **Low entropy** (~3-4 bits): Biased codon usage → potential gene
+- **Low entropy** (~3-4 bits): Biased codon usage → potential
+  gene/coding regions
 
 ### Kullback-Leibler Divergence
 
@@ -81,7 +82,7 @@ distribution ($Q$).
 
 There are different use cases, few of them would be:
 
-1.  **De nove gene dscovery**: to find potential coding regions in
+1.  **De novo gene discovery**: to find potential coding regions in
     unannotated genomes
 2.  **Small ORF identification**: for discovering small peptides in
     non-coding regions
@@ -93,44 +94,65 @@ There are different use cases, few of them would be:
 
 ## Acknowledgments
 
-Built on top of Bioconductor’s excellent `Biostrings`, `coRdon`, and
-`ggplot2` packages.
+Built on top of Bioconductor’s excellent `Biostrings`, and `coRdon`
+packages.
 
 # Package index
 
-## All functions
+## Entropy Analysis
 
-- [`calculate_codon_frequencies()`](calculate_codon_frequencies.md) :
-  Calculate Codon Frequencies
-- [`calculate_enc()`](calculate_enc.md) : Calculate Effective Number of
-  Codons (ENC)
-- [`calculate_kl_divergence()`](calculate_kl_divergence.md) : Calculate
-  Kullback-Leibler Divergence
-- [`calculate_rscu()`](calculate_rscu.md) : Calculate Relative
-  Synonymous Codon Usage (RSCU)
-- [`calculate_shannon_entropy()`](calculate_shannon_entropy.md) :
-  Calculate Shannon Entropy
-- [`compare_entropy_profiles()`](compare_entropy_profiles.md) : Compare
-  Entropy Profiles
-- [`create_reference_profile()`](create_reference_profile.md) : Create
-  Reference Codon Profile
-- [`entropy_peak_detection()`](entropy_peak_detection.md) : Detect
-  Entropy Peaks
-- [`extract_known_genes()`](extract_known_genes.md) : Extract Known
-  Genes from GTF/GFF File
-- [`find_candidate_orfs()`](find_candidate_orfs.md) : Find Candidate
-  ORFs
-- [`plot_candidate_orfs()`](plot_candidate_orfs.md) : Plot Candidate
-  ORFs
-- [`plot_entropy_profile()`](plot_entropy_profile.md) : Plot Entropy
-  Profile
-- [`read_fasta()`](read_fasta.md) : Read FASTA File
-- [`sliding_window_scan()`](sliding_window_scan.md) : Sliding Window
-  Entropy Scan
+- [`calculate_shannon_entropy()`](https://danymukesha.github.io/GeneScout/reference/calculate_shannon_entropy.md)
+  : Calculate Shannon Entropy
+- [`calculate_kl_divergence()`](https://danymukesha.github.io/GeneScout/reference/calculate_kl_divergence.md)
+  : Calculate Kullback-Leibler Divergence
+- [`compare_entropy_profiles()`](https://danymukesha.github.io/GeneScout/reference/compare_entropy_profiles.md)
+  : Compare Entropy Profiles
+- [`entropy_peak_detection()`](https://danymukesha.github.io/GeneScout/reference/entropy_peak_detection.md)
+  : Detect Entropy Peaks
+
+## Codon & ORF Tools
+
+- [`calculate_codon_frequencies()`](https://danymukesha.github.io/GeneScout/reference/calculate_codon_frequencies.md)
+  : Calculate Codon Frequencies
+- [`calculate_rscu()`](https://danymukesha.github.io/GeneScout/reference/calculate_rscu.md)
+  : Calculate Relative Synonymous Codon Usage (RSCU)
+- [`calculate_enc()`](https://danymukesha.github.io/GeneScout/reference/calculate_enc.md)
+  : Calculate Effective Number of Codons (ENC)
+- [`find_orfs_in_sequence()`](https://danymukesha.github.io/GeneScout/reference/find_orfs_in_sequence.md)
+  : Find ORFs in Sequence
+- [`find_candidate_orfs()`](https://danymukesha.github.io/GeneScout/reference/find_candidate_orfs.md)
+  : Find Candidate ORFs
+- [`plot_candidate_orfs()`](https://danymukesha.github.io/GeneScout/reference/plot_candidate_orfs.md)
+  : Plot Candidate ORFs
+- [`plot_entropy_profile()`](https://danymukesha.github.io/GeneScout/reference/plot_entropy_profile.md)
+  : Plot Entropy Profile
+- [`extract_known_genes()`](https://danymukesha.github.io/GeneScout/reference/extract_known_genes.md)
+  : Extract Known Genes from GTF/GFF File
+- [`create_reference_profile()`](https://danymukesha.github.io/GeneScout/reference/create_reference_profile.md)
+  : Create Reference Codon Profile
+- [`sliding_window_scan()`](https://danymukesha.github.io/GeneScout/reference/sliding_window_scan.md)
+  : Sliding Window Entropy Scan
+
+## Helper Functions
+
+- [`.adjust_codon_length()`](https://danymukesha.github.io/GeneScout/reference/dot-adjust_codon_length.md)
+  : Ensure Sequence Length is Divisible by 3
+- [`.get_all_codons()`](https://danymukesha.github.io/GeneScout/reference/dot-get_all_codons.md)
+  : Get All Possible Codons
+- [`.get_window_coords()`](https://danymukesha.github.io/GeneScout/reference/dot-get_window_coords.md)
+  : Sliding Window Iterator
+- [`.parse_gtf_line()`](https://danymukesha.github.io/GeneScout/reference/dot-parse_gtf_line.md)
+  : Parse GTF Line
+- [`.validate_dna()`](https://danymukesha.github.io/GeneScout/reference/dot-validate_dna.md)
+  : Validate DNA Sequence
+- [`read_fasta()`](https://danymukesha.github.io/GeneScout/reference/read_fasta.md)
+  : Read FASTA File
 
 # Articles
 
 ### All vignettes
 
-- [GeneScout on APOE and chr19](GeneScout_on_APOE-and-chr19.md):
-- [GeneScout: De Novo Small ORF Discovery](GeneScout.md):
+- [GeneScout on APOE and
+  chr19](https://danymukesha.github.io/GeneScout/articles/GeneScout_on_APOE-and-chr19.md):
+- [GeneScout: De Novo Small ORF
+  Discovery](https://danymukesha.github.io/GeneScout/articles/GeneScout.md):

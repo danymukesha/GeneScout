@@ -2,8 +2,8 @@
 
 ## Authors
 
-- **Dany Mukesha**. Author, maintainer.
-  [](https://orcid.org/0009-0001-9514-751X)
+- **[Dany Mukesha](https://danymukesha.github.io/)**. Author,
+  maintainer. [](https://orcid.org/0009-0001-9514-751X)
 
 ## Citation
 

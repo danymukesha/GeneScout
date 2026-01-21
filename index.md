@@ -2,9 +2,9 @@
 
 **GeneScout** is an R package for identifying hidden genes in non-coding
 DNA using statistical information theory. It implements sliding window
-entropy scanning, Shannon entropy calculation, and Kullback-Leibler
-divergence to discover potential small open reading frames (ORFs) in
-genomic sequences without requiring prior annotation.
+entropy scanning, Shannon entropy estimation, and Kullback–Leibler
+divergence to discover potential small open reading frames (sORFs)
+directly from genomic sequences without requiring prior annotation.
 
 Most existing bioinformatics tools for codon usage bias analysis (like
 `coRdon` and `Biostrings`) are designed for analyzing **known** genes
@@ -19,14 +19,14 @@ Here are the key features of the tool has:
 - **Sliding window entropy scanning**: This implementation efficiently
   scan millions of base pairs to find regions with unusual codon usage
   patterns
-- **Shannon entropy calculation**: This measures the randomness of codon
-  distributions
+- **Shannon entropy calculation**: This quantifies the randomness of
+  codon distributions within genomic windows.
 - **Kullback-Leibler divergence**: Compare regions to organism-specific
-  codon usage profiles
-- **ORF setection**: Find candidate open reading frames in low-entropy
-  regions
-- **Reference profil creation**: By build organism-specific codon usage
-  profiles from known genes
+  codon usage profiles.
+- **ORF detection**: Identifies candidate open reading frames within
+  low-entropy regions
+- **Reference profile construction** Builds organism-specific codon
+  usage profiles from known coding sequences
 
 ## Installation
 
@@ -70,7 +70,8 @@ plot_candidate_orfs(scan_result, candidates, peaks)
 $$H = - \sum\limits_{i = 1}^{64}P(i)\log_{2}P(i)$$
 
 - **High entropy** (~6 bits): Random codon usage → non-coding DNA
-- **Low entropy** (~3-4 bits): Biased codon usage → potential gene
+- **Low entropy** (~3-4 bits): Biased codon usage → potential
+  gene/coding regions
 
 ### Kullback-Leibler Divergence
 
@@ -81,7 +82,7 @@ distribution ($Q$).
 
 There are different use cases, few of them would be:
 
-1.  **De nove gene dscovery**: to find potential coding regions in
+1.  **De novo gene discovery**: to find potential coding regions in
     unannotated genomes
 2.  **Small ORF identification**: for discovering small peptides in
     non-coding regions
@@ -93,5 +94,5 @@ There are different use cases, few of them would be:
 
 ## Acknowledgments
 
-Built on top of Bioconductor’s excellent `Biostrings`, `coRdon`, and
-`ggplot2` packages.
+Built on top of Bioconductor’s excellent `Biostrings`, and `coRdon`
+packages.
