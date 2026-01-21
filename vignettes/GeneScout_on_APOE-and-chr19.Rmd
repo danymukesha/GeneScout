@@ -1,0 +1,176 @@
+---
+title: "GeneScout on APOE and chr19"
+author: "Dany Mukesha"
+date: "`r Sys.Date()`"
+abstract: |
+  Demonstration of `GeneScout` to identify hidden small open reading frames 
+  (ORFs) in human genomic sequences using data from chromosome 19 and APOE 
+  gene.
+output: 
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{GeneScout: De Novo Small ORF Discovery}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(GeneScout)
+library(Biostrings)
+```
+
+# Introduction
+
+Many genomes studied in detail still contain regions of DNA once thought to be
+“non-coding”, but some of these regions may actually hide small genes.
+`GeneScout` uses **codon usage statistics** and **entropy analysis** to
+identify these hidden genes by analyzing patterns in how DNA codes 
+for proteins and measuring sequence complexity.
+
+Here we demonstrate it using:
+
+* **APOE gene** as a known coding reference.
+* **Chromosome 19 segments** (`chr19`) as the genome to scan.
+
+---
+
+# Load Data
+
+```{r}
+chr19 <- GeneScout::read_fasta("../data/chr19.fasta")
+apoe_sequence <-  GeneScout::read_fasta("../data/APOE.fasta")[1]
+```
+
+```{r}
+# chr19: DNAStringSet with multiple segments
+# apoe_sequence: DNAStringSet containing APOE
+chr19_seq <- chr19[[460]]         # take 460 segment for demonstration
+apoe_seq <- apoe_sequence[[1]]    # APOE gene sequence
+```
+
+---
+
+# Codon Frequency and Shannon Entropy
+
+```{r}
+# Calculate codon frequencies for APOE
+apoe_codon_freq <- calculate_codon_frequencies(apoe_seq)
+print(head(apoe_codon_freq[apoe_codon_freq > 0]))
+```
+
+```{r}
+# Shannon entropy of APOE sequence
+apoe_entropy <- calculate_shannon_entropy(apoe_codon_freq)
+paste("APOE Shannon Entropy:", round(apoe_entropy, 3), "bits")
+```
+
+---
+
+# Create Reference Profile
+
+```{r}
+# Using APOE as the reference gene for codon usage
+ref_profile <- create_reference_profile(list(apoe_seq), method = "mean")
+print(head(ref_profile[ref_profile > 0]))
+```
+
+---
+
+# Sliding Window Scan of chr19
+
+We scan **the full segment** of chr19 (safe coordinates):
+
+```{r}
+chr19_region <- subseq(chr19_seq, start = 1, end = length(chr19_seq))
+```
+
+# Sliding window scan
+
+```{r}
+scan_result <- sliding_window_scan(
+    chr19_region,
+    window_size = 150,
+    step_size = 30,
+    reference_profile = ref_profile
+)
+```
+
+
+```{r}
+# Inspect first few rows
+head(scan_result)
+```
+
+---
+
+# Detect Low-Entropy Peaks
+
+```{r}
+peaks <- entropy_peak_detection(
+    scan_result,
+    metric = "shannon_entropy",
+    method = "quantile",
+    threshold = 0.1,
+    min_peak_width = 3
+)
+
+peaks
+```
+---
+
+# Candidate ORFs within Low-Entropy Peaks
+
+```{r}
+candidates <- find_candidate_orfs(
+    chr19_region,
+    scan_result,
+    peaks,
+    min_orf_length = 60,
+    start_codons = c("ATG"),
+    stop_codons = c("TAA", "TAG", "TGA")
+)
+
+candidates
+```
+
+---
+
+# Visualizations
+
+### Entropy Profile
+
+```{r}
+plot_entropy_profile(
+    scan_result,
+    metric = "shannon_entropy",
+    highlight_threshold = TRUE
+)
+```
+
+### Peaks Highlighted
+
+```{r}
+plot_entropy_profile(
+    scan_result,
+    peaks = peaks,
+    metric = "shannon_entropy",
+    show_peaks = TRUE
+)
+```
+
+### Candidate ORFs
+
+```{r}
+plot_candidate_orfs(scan_result, candidates, peaks, metric = "shannon_entropy")
+```
+
+---
+
+# Notes
+
+* For **full chromosome analysis**, loop through all `chr19` segments.
+* Adjust `window_size` and `step_size` for genome-scale efficiency.
+* `GeneScout` can be applied to any DNA sequence to detect hidden ORFs.

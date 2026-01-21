@@ -224,3 +224,11 @@ calculate_enc <- function(frequencies) {
         return(61)
     }
 }
+
+# future implementation of this functions with be written in Golang or C/C++
+#
+# As example: Scanning a whole chromosome (millions of letters) with a sliding
+# window in pure R will be slow.
+# So, should consider using the Rcpp package to move the sliding_window_scan
+# loop into C++. Since you are just doing simple math on strings,
+# C++ will make it 100x faster (just estimateing).

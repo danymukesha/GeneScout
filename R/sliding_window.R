@@ -192,3 +192,34 @@ summary.entropy_scan_result <- function(object, ...) {
 
     invisible(object)
 }
+
+# Future implementations:
+##  1. Performance Optimization (The "C++" Factor)
+### Scanning a whole chromosome (millions of letters) with a sliding window
+### in pure R will be slow.
+### - The fix: Considering using the `Rcpp` package to move
+### the `sliding_window_scan` loop into C++. Since you are just doing simple
+###  math on strings, C++ will make it **100x faster** (just an estimation).
+
+## 2. Reverse Complement Scanning
+### Currently, your code only scans the "Forward" strand of DNA. In biology,
+### genes can be on the "Reverse" strand (the DNA runs the other way).
+### - Update `sliding_window_scan` to also scan the reverse complement.
+# ```r
+# # Simple logic to add:
+# rev_seq <- Biostrings::reverseComplement(Biostrings::DNAString(sequence))
+# # Run your scan on both and label them "Forward" and "Reverse"
+# ```
+
+##  3. Better Peak Detection
+### The `entropy_peak_detection` uses a simple quantile threshold.
+### In genomics, "noise" changes across the chromosome.
+### - The fix: Use a **Z-score** or a **Moving Average** to find peaks.
+### This helps find genes in "high-GC" areas where the baseline entropy
+### might be naturally different.
+
+##  4. Handling "N" (Unknown Bases)
+### Add the validator checks for `N`, but if a window has 50% `N`s,
+### the entropy calculation will be misleading.
+### - The fix: Add a parameter `max_n_threshold = 0.1`. If a window has more
+### than 10% "N" bases, skip it or mark it as "Low Confidence."
