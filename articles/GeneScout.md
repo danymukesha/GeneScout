@@ -466,7 +466,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] GeneScout_0.1.0  BiocStyle_2.38.0
+    ## [1] GeneScout_0.99.0 BiocStyle_2.38.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] SummarizedExperiment_1.40.0 gtable_0.3.6               

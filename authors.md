@@ -11,13 +11,13 @@ Source:
 [`DESCRIPTION`](https://github.com/danymukesha/GeneScout/blob/main/DESCRIPTION)
 
 Mukesha D (2026). *GeneScout: De Novo Small ORF Discovery with Entropy
-Analysis*. R package version 0.1.0,
+Analysis*. R package version 0.99.0,
 <https://github.com/danymukesha/GeneScout>.
 
     @Manual{,
       title = {GeneScout: De Novo Small ORF Discovery with Entropy Analysis},
       author = {Dany Mukesha},
       year = {2026},
-      note = {R package version 0.1.0},
+      note = {R package version 0.99.0},
       url = {https://github.com/danymukesha/GeneScout},
     }
