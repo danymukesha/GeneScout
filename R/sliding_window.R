@@ -138,7 +138,7 @@ sliding_window_scan <- function(sequence,
 
     # FINAL REPORT for codon mismatches
     if (length(mismatch_report) > 0) {
-        message("⚠ Codon mismatch summary for this sequence:")
+        message("!!! Codon mismatch summary for this sequence:")
         for (entry in mismatch_report) {
             msg <- paste0(
                 "  Window ", entry$window_id, ": ",

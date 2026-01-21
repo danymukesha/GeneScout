@@ -176,7 +176,7 @@ extract_known_genes <- function(gtf_file,
 
         chr <- as.character(gtf_data@seqnames[i])
         start <- as.numeric(gtf_data@ranges@start[i])
-        end <- gtf_data@ranges@width[6] + gtf_data@ranges@start[6] - 1
+        end <- gtf_data@ranges@width[i] + gtf_data@ranges@start[i] - 1
         strand <- as.character(gtf_data@strand[i])
 
         genome_row <- which(sub(" .*", "", genome_df$seqname) == chr)

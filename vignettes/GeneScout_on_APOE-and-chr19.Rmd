@@ -11,7 +11,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{GeneScout: De Novo Small ORF Discovery}
+  %\VignetteIndexEntry{GeneScout on APOE and chr19}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
