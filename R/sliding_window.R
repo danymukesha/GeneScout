@@ -33,7 +33,12 @@ create_reference_profile <- function(sequences, method = "mean") {
         stop("Invalid method. Use 'mean' or 'median'")
     }
 
-    ref_profile <- ref_profile / sum(ref_profile)
+    if (all(ref_profile == 0)) {
+        warning("No codon Found! All frequencies are zero!")
+    } else {
+        ref_profile <- ref_profile / sum(ref_profile)
+    }
+
     return(ref_profile)
 }
 
@@ -137,11 +142,21 @@ sliding_window_scan <- function(sequence,
         for (entry in mismatch_report) {
             msg <- paste0(
                 "  Window ", entry$window_id, ": ",
-                if (length(entry$extra_codons) > 0) paste0("Extra codons = ", paste(entry$extra_codons, collapse = ", ")) else "",
+                if (length(entry$extra_codons) > 0) {
+                    paste0(
+                        "Extra codons = ",
+                        paste(entry$extra_codons,
+                            collapse = ", "
+                        )
+                    )
+                } else {
+                    ""
+                },
                 if (length(entry$missing_codons) > 0) {
                     paste0(
                         if (length(entry$extra_codons) > 0) "; " else "",
-                        "Missing codons = ", paste(entry$missing_codons, collapse = ", ")
+                        "Missing codons = ",
+                        paste(entry$missing_codons, collapse = ", ")
                     )
                 } else {
                     ""

@@ -1,4 +1,71 @@
-url: ~
+title: "GeneScout"
+url: https://danymukesha.github.io/GeneScout/  
+logo: "man/figures/logo.png"
+  
+build:
+  lazy: true
+  overwrite: true
+
 template:
   bootstrap: 5
+  bslib:
+    primary: "#0054AD"
+    secondary: "#4B5563"
+    success: "#2E7D32"
+    info: "#0288D1"
+    warning: "#FFB300"
+    danger: "#A6081A"
+    bg: "#F8F9FA"
+    fg: "#212529"         
+    # font: "Roboto"
+    base_font: "16px"
+    code_font: "Fira Code"
+    mono_font: "Consolas"
 
+navbar:
+  inverse: false
+  sticky: true
+
+search:
+  engine: "fuse"  
+
+toc:
+  float: true
+  sticky: true
+
+reference:
+  - title: "Entropy Analysis"
+    contents:
+      - calculate_shannon_entropy
+      - calculate_kl_divergence
+      - compare_entropy_profiles
+      - entropy_peak_detection
+
+  - title: "Codon & ORF Tools"
+    contents:
+      - calculate_codon_frequencies
+      - calculate_rscu
+      - calculate_enc
+      - find_orfs_in_sequence
+      - find_candidate_orfs
+      - plot_candidate_orfs
+      - plot_entropy_profile
+      - extract_known_genes
+      - create_reference_profile
+      - sliding_window_scan
+
+  - title: "Helper Functions"
+    contents:
+      - .adjust_codon_length
+      - .get_all_codons
+      - .get_window_coords
+      - .parse_gtf_line
+      - .validate_dna
+      - read_fasta
+
+development:
+  mode: auto
+
+authors:
+  Dany Mukesha:
+    href: https://danymukesha.github.io/
