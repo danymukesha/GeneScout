@@ -2,8 +2,8 @@
 #'
 #' Read DNA sequences from a FASTA file and convert to Biostrings DNAStringSet.
 #'
-#' @param file_path Character string specifying the path to the FASTA file
-#' @return A DNAStringSet object containing the DNA sequences
+#' @param file_path Character string specifying the path to a FASTA or FASTA.GZ file
+#' @return A \code{DNAStringSet} object containing the DNA sequences
 #' @export
 #' @examples
 #' \dontrun{

@@ -2,22 +2,62 @@
 % Please edit documentation in R/entropy.R
 \name{calculate_enc}
 \alias{calculate_enc}
-\title{Calculate Effective Number of Codons (ENC)}
+\title{Calculate the Effective Number of Codons (ENC)}
 \usage{
 calculate_enc(frequencies)
 }
 \arguments{
-\item{frequencies}{Named numeric vector of codon frequencies}
+\item{frequencies}{Named numeric vector of codon frequencies or counts.
+Names must be standard DNA codons (e.g., "ATG", "GCC") and should include
+all 64 codons. Values may be raw counts or normalized frequencies.}
 }
 \value{
-Numeric value of ENC
+A single numeric value giving the Effective Number of Codons (ENC),
+constrained to a maximum of 61.
 }
 \description{
-Calculate the Effective Number of Codons (ENC), a measure of codon usage bias.
-ENC ranges from 20 (extreme bias) to 61 (no bias).
+Computes the Effective Number of Codons (ENC; Wright 1990), a widely used
+measure of synonymous codon usage bias in protein-coding DNA sequences.
+ENC quantifies how evenly synonymous codons are used across amino acids.
+}
+\details{
+ENC ranges from:
+\itemize{
+\item \strong{20}: extreme codon usage bias (one codon per amino acid)
+\item \strong{61}: no codon usage bias (all synonymous codons used equally)
+}
+
+This implementation follows the original formulation by Wright (1990),
+based on codon-family homozygosity (\eqn{F_k}) for amino acids with
+\eqn{k = 2, 3, 4, 6} synonymous codons:
+
+\deqn{
+ENC = 2 + \frac{9}{F_2} + \frac{1}{F_3} + \frac{5}{F_4} + \frac{3}{F_6}
+}
+
+where \eqn{F_k} is the average homozygosity of codon usage within each
+synonymous codon family of size \eqn{k}.
+
+Stop codons and amino acids encoded by a single codon (Methionine and
+Tryptophan) are excluded from the calculation, as they do not contribute
+to synonymous codon bias.
+
+The input vector is internally normalized within each synonymous codon
+family. Amino acids for which no codons are observed are ignored.
+If insufficient information is available for one or more degeneracy
+classes, their contribution to ENC is omitted.
 }
 \examples{
 sequence <- "ATGATGATGTTATTATTACGCCGCCGCC"
 freqs <- calculate_codon_frequencies(sequence)
-enc <- calculate_enc(freqs)
+calculate_enc(freqs)
+
+}
+\references{
+Wright, F. (1990). The 'effective number of codons' used in a gene.
+\emph{Gene}, 87(1), 23–29. doi:10.1016/0378-1119(90)90491-9
+}
+\seealso{
+\code{\link{calculate_codon_frequencies}},
+\code{\link{calculate_rscu}}
 }

@@ -25,14 +25,23 @@ calculate_codon_frequencies <- function(sequence, normalize = TRUE) {
         return(setNames(rep(0, 64), .get_all_codons()))
     }
 
-    codons <- stringr::str_extract_all(adjusted_seq, ".{1,3}")[[1]]
+    starts <- seq(1, nchar(adjusted_seq), by = 3)
+    codons <- substring(adjusted_seq, starts, starts + 2)
 
-    codon_table <- table(codons)
+    # Drop ambiguous codons
+    ambiguous <- grepl("N", codons)
+    if (any(ambiguous)) {
+        warning(sum(ambiguous), " codons containing 'N' were removed")
+        codons <- codons[!ambiguous]
+    }
+
     all_codons <- .get_all_codons()
+    full_table <- setNames(rep(0, 64), all_codons)
 
-    full_table <- rep(0, 64)
-    names(full_table) <- all_codons
-    full_table[names(codon_table)] <- codon_table
+    if (length(codons) > 0) {
+        codon_table <- table(codons)
+        full_table[names(codon_table)] <- codon_table
+    }
 
     if (normalize) {
         total <- sum(full_table)
@@ -41,8 +50,9 @@ calculate_codon_frequencies <- function(sequence, normalize = TRUE) {
         }
     }
 
-    return(full_table)
+    full_table
 }
+
 
 #' Calculate Shannon Entropy
 #'
@@ -158,18 +168,60 @@ calculate_rscu <- function(frequencies) {
     return(rscu_values)
 }
 
-#' Calculate Effective Number of Codons (ENC)
+#' Calculate the Effective Number of Codons (ENC)
 #'
-#' Calculate the Effective Number of Codons (ENC), a measure of codon usage bias.
-#' ENC ranges from 20 (extreme bias) to 61 (no bias).
+#' Computes the Effective Number of Codons (ENC; Wright 1990), a widely used
+#' measure of synonymous codon usage bias in protein-coding DNA sequences.
+#' ENC quantifies how evenly synonymous codons are used across amino acids.
 #'
-#' @param frequencies Named numeric vector of codon frequencies
-#' @return Numeric value of ENC
-#' @export
+#' ENC ranges from:
+#' \itemize{
+#'   \item \strong{20}: extreme codon usage bias (one codon per amino acid)
+#'   \item \strong{61}: no codon usage bias (all synonymous codons used equally)
+#' }
+#'
+#' This implementation follows the original formulation by Wright (1990),
+#' based on codon-family homozygosity (\eqn{F_k}) for amino acids with
+#' \eqn{k = 2, 3, 4, 6} synonymous codons:
+#'
+#' \deqn{
+#' ENC = 2 + \frac{9}{F_2} + \frac{1}{F_3} + \frac{5}{F_4} + \frac{3}{F_6}
+#' }
+#'
+#' where \eqn{F_k} is the average homozygosity of codon usage within each
+#' synonymous codon family of size \eqn{k}.
+#'
+#' Stop codons and amino acids encoded by a single codon (Methionine and
+#' Tryptophan) are excluded from the calculation, as they do not contribute
+#' to synonymous codon bias.
+#'
+#' @param frequencies Named numeric vector of codon frequencies or counts.
+#'   Names must be standard DNA codons (e.g., "ATG", "GCC") and should include
+#'   all 64 codons. Values may be raw counts or normalized frequencies.
+#'
+#' @return A single numeric value giving the Effective Number of Codons (ENC),
+#'   constrained to a maximum of 61.
+#'
+#' @details
+#' The input vector is internally normalized within each synonymous codon
+#' family. Amino acids for which no codons are observed are ignored.
+#' If insufficient information is available for one or more degeneracy
+#' classes, their contribution to ENC is omitted.
+#'
+#' @references
+#' Wright, F. (1990). The 'effective number of codons' used in a gene.
+#' \emph{Gene}, 87(1), 23–29. doi:10.1016/0378-1119(90)90491-9
+#'
+#' @seealso
+#' \code{\link{calculate_codon_frequencies}},
+#' \code{\link{calculate_rscu}}
+#'
 #' @examples
 #' sequence <- "ATGATGATGTTATTATTACGCCGCCGCC"
 #' freqs <- calculate_codon_frequencies(sequence)
-#' enc <- calculate_enc(freqs)
+#' calculate_enc(freqs)
+#'
+#' @export
 calculate_enc <- function(frequencies) {
     aa_table <- c(
         "ATA" = "I", "ATC" = "I", "ATT" = "I",
@@ -194,36 +246,43 @@ calculate_enc <- function(frequencies) {
 
     all_codons <- .get_all_codons()
     aa_names <- aa_table[all_codons]
-    unique_aa <- unique(aa_names)
 
-    enc_sum <- 0
-    n_aa <- 0
+    # remove stops, Met, Trp (no degeneracy)
+    valid_aas <- setdiff(unique(aa_names), c("*", "M", "W"))
 
-    for (aa in unique_aa) {
-        if (aa == "*") next
+    F_values <- list(`2` = c(), `3` = c(), `4` = c(), `6` = c())
 
-        aa_codons <- names(aa_names[aa_names == aa])
-        aa_freqs <- frequencies[aa_codons]
-        aa_freqs <- aa_freqs[aa_freqs > 0]
+    for (aa in valid_aas) {
+        codons <- names(aa_names[aa_names == aa])
+        k <- length(codons)
 
-        if (length(aa_freqs) > 0) {
-            aa_entropy <- -sum(aa_freqs / sum(aa_freqs) * log2(aa_freqs / sum(aa_freqs)))
-            n_codons <- length(aa_codons)
+        p <- frequencies[codons]
+        if (sum(p) == 0) next
 
-            if (n_codons > 1) {
-                enc_sum <- enc_sum + aa_entropy / log2(n_codons)
-                n_aa <- n_aa + 1
-            }
+        p <- p / sum(p)
+        sum_p2 <- sum(p^2)
+
+        F_k <- (sum_p2 - 1 / k) / (1 - 1 / k)
+
+        if (k %in% c(2, 3, 4, 6)) {
+            F_values[[as.character(k)]] <- c(F_values[[as.character(k)]], F_k)
         }
     }
 
-    if (n_aa > 0) {
-        enc <- 2 + 9 / enc_sum
-        return(min(enc, 61))
-    } else {
-        return(61)
-    }
+    F2 <- mean(F_values[["2"]], na.rm = TRUE)
+    F3 <- mean(F_values[["3"]], na.rm = TRUE)
+    F4 <- mean(F_values[["4"]], na.rm = TRUE)
+    F6 <- mean(F_values[["6"]], na.rm = TRUE)
+
+    ENC <- 2 +
+        ifelse(is.finite(F2), 9 / F2, 0) +
+        ifelse(is.finite(F3), 1 / F3, 0) +
+        ifelse(is.finite(F4), 5 / F4, 0) +
+        ifelse(is.finite(F6), 3 / F6, 0)
+
+    min(ENC, 61)
 }
+
 
 # future implementation of this functions with be written in Golang or C/C++
 #

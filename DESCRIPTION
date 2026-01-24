@@ -26,7 +26,8 @@ Imports:
     tidyr,
     stringr,
     scales,
-    rtracklayer
+    rtracklayer,
+    seqinr
 Suggests:
     testthat (>= 3.0.0),
     knitr,
@@ -41,7 +42,8 @@ biocViews:
     GenePrediction,
     FunctionalGenomics,
     Software
-URL: https://github.com/danymukesha/GeneScout
+URL: https://github.com/danymukesha/GeneScout,
+    https://danymukesha.github.io/GeneScout
 BugReports: https://github.com/danymukesha/GeneScout/issues
 
 

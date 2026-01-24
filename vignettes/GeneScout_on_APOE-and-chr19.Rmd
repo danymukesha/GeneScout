@@ -40,8 +40,9 @@ Here we demonstrate it using:
 # Load Data
 
 ```{r}
-chr19 <- GeneScout::read_fasta("../data/chr19.fasta")
-apoe_sequence <-  GeneScout::read_fasta("../data/APOE.fasta")[1]
+# fasta_path <- system.file("extdata", "APOE.fasta.gz", package = "GeneScout")
+chr19 <- GeneScout::read_fasta("../inst/extdata/chr19.fasta.gz")
+apoe_sequence <-  GeneScout::read_fasta("../inst/extdata/APOE.fasta.gz")[1]
 ```
 
 ```{r}
@@ -49,6 +50,12 @@ apoe_sequence <-  GeneScout::read_fasta("../data/APOE.fasta")[1]
 # apoe_sequence: DNAStringSet containing APOE
 chr19_seq <- chr19[[460]]         # take 460 segment for demonstration
 apoe_seq <- apoe_sequence[[1]]    # APOE gene sequence
+```
+
+```{r eval=FALSE, echo=FALSE, include=FALSE}
+# chr19_seq <- DNAString(
+#   paste0(as.character(chr19[1:100]), collapse = "") # for many segments
+# )
 ```
 
 ---

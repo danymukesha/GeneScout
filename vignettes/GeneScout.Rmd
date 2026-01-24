@@ -236,12 +236,12 @@ For large genomes, process chromosome by chromosome:
 
 ```{r eval=FALSE}
 # Read genome FASTA file (https://parasite.wormbase.org/index.html)
-genome <- read_fasta("../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa")
+genome <- read_fasta("../inst/extdata/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa")
 
 # Extract known genes from GTF annotation file
 known_genes <- extract_known_genes(
-  gtf_file = "../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.canonical_geneset.gtf",
-  genome_fasta = "../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa",
+  gtf_file = "../inst/extdata/acanthocheilonema_viteae.PRJEB1697.WBPS19.canonical_geneset.gtf",
+  genome_fasta = "../inst/extdata/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa",
   feature_type = "gene",
   min_length = 150,
   max_genes = 1000

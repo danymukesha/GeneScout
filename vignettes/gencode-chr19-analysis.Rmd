@@ -1,0 +1,409 @@
+---
+title: "GENCODE-Informed Chromosome 19 Analysis with GeneScout"
+author: "Dany Mukesha"
+date: "`r Sys.Date()`"
+abstract: |
+  Analysis of sORF using GENCODE protein-coding transcripts as reference
+  for human codon bias analysis of chromosome 19.
+output: 
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 4
+    code_folding: show
+vignette: >
+  %\VignetteIndexEntry{GENCODE-Informed Chromosome 19 Analysis with GeneScout}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, 
+                     fig.width = 12, fig.height = 8)
+library(GeneScout)
+library(ggplot2)
+library(dplyr)
+library(seqinr)
+```
+
+# Introduction
+
+- **GENCODE protein-coding transcripts** (93,000+ curated sequences) for reference
+- **Complete chromosome 19** for large-scale analysis  
+- **Organism-specific codon bias** patterns for human genome
+
+## Why GENCODE?
+
+GENCODE provides the **gold standard** for human genomic annotation:
+
+**Comprehensive**: 93,000+ protein-coding transcripts  
+**High-quality**: Manual curation and experimental validation  
+**Organism-specific**: Human transcriptome  
+**Diverse representation**: All protein-coding genes  
+**Regular updates**: Current genome annotations
+
+This creates a **robust reference profile** that captures human codon usage
+patterns far better than single-gene references.
+
+# GENCODE Reference Profile Creation
+
+```{r}
+# Load GENCODE protein-coding transcripts
+gencode_pc <- read_fasta("../inst/extdata/gencode.v19.pc_transcripts.fa.gz") # Protein-coding transcript sequences
+gencode_lncRNA <- read_fasta("../inst/extdata/gencode.v19.lncRNA_transcripts.fa.gz") # Long non-coding RNA transcript sequences
+cat("Loaded", length(gencode_pc), "GENCODE transcripts\n")
+
+# Filter high-quality transcripts (300-3000 bp)
+transcript_lengths <- BiocGenerics::width(gencode_pc)
+valid_transcripts <- gencode_pc[transcript_lengths >= 300 & transcript_lengths <= 3000]
+
+cat("Selected", length(valid_transcripts), "high-quality transcripts\n")
+
+# Create comprehensive human reference profile
+gencode_ref_profile <- create_reference_profile(valid_transcripts, method = "mean")
+
+# Reference statisticss
+active_codons <- sum(gencode_ref_profile > 0)
+profile_completeness <- active_codons / 64
+
+cat("GENCODE reference profile:\n")
+cat("  Active codons:", active_codons, "/64\n")
+cat("  Profile completeness:", round(profile_completeness * 100, 1), "%\n")
+```
+
+```{r}
+df <- data.frame(
+    codon = names(gencode_ref_profile),
+    frequency = as.numeric(gencode_ref_profile)
+)
+
+df$aa <- sapply(df$codon, function(x) seqinr::translate(s2c(x)))
+df$codon <- factor(df$codon, levels = df$codon)
+```
+
+
+```{r}
+ggplot(df, aes(x = aa, y = frequency, fill = codon)) +
+  geom_col(width = 0.8) +
+  scale_fill_grey(start = 0.3, end = 0.9) +
+  theme_classic(base_size = 11) +
+  theme(
+    legend.position = "none",
+    axis.title = element_blank()
+  ) +
+  labs(
+    title = "Codon usage bias across amino acids"
+  )
+```
+
+
+```{r}
+df <- df %>%
+  arrange(aa) %>%
+  mutate(codon = factor(codon, levels = codon))
+
+ggplot(df, aes(x = codon, y = frequency, fill = aa)) +
+    geom_col(width = 1) + coord_polar() + theme_bw() +
+    theme(axis.text.y = element_blank(), axis.title = element_blank()) +
+    labs(
+        title = "Codon Usage Wheel (Grouped by Amino Acid)",
+        fill = "Amino Acid"
+    )
+```
+
+```{r}
+df_rscu <- df %>%
+  group_by(aa) %>%
+  mutate(
+    rscu = frequency / mean(frequency)
+  ) %>%
+  ungroup()
+
+ggplot(df_rscu, aes(x = codon, y = rscu)) +
+  geom_col(fill = "grey30", width = 0.8) +
+  facet_wrap(~ aa, scales = "free_x", ncol = 5) +
+  geom_hline(yintercept = 1, linetype = "dashed", linewidth = 0.3) +
+  theme_minimal(base_size = 11) +
+  theme(
+    axis.text.x = element_text(angle = 90, size = 6),
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    strip.text = element_text(face = "bold")
+  ) +
+  labs(
+    title = "Relative synonymous codon usage (RSCU)"
+  )
+
+```
+
+
+```{r}
+ggplot(df_rscu, aes(x = aa, y = rscu)) +
+  geom_boxplot(
+    width = 0.5,
+    outlier.shape = NA,
+    fill = "grey85"
+  ) +
+  geom_jitter(width = 0.15, size = 1.2) +
+  geom_hline(yintercept = 1, linetype = "dashed") +
+  theme_classic(base_size = 11) +
+  theme(
+    axis.title = element_blank()
+  ) +
+  labs(
+    title = "Distribution of relative synonymous codon usage"
+  )
+
+```
+
+
+## Chromosome 19 Data Loading
+
+```{r}
+# Load complete chromosome 19
+chr19_data <- read_fasta("../inst/extdata/chr19.fasta.gz")
+chr19_length <- sum(BiocGenerics::width(chr19_data))
+
+cat("Chromosome 19:\n")
+cat("  Segments:", length(chr19_data), "\n")
+cat("  Total length:", round(chr19_length / 1e6, 2), "Mb\n")
+
+# Select diverse segments for analysis
+selected_indices <- c(50, 150, 250, 350, 450, 550)  # 6 diverse regions
+chr19_segments <- chr19_data[selected_indices]
+```
+
+## Region Selection Strategy
+
+Our segment selection captures different genomic contexts:
+
+```{r}
+nm <- names(chr19_segments)
+
+metadata <- data.frame(
+  genome_build = stringr::str_extract(nm, "^hg\\d+"),
+  probe_id     = stringr::str_extract(nm, "gnf1h[0-9A-Za-z_]+"),
+  chr          = stringr::str_extract(nm, "chr[0-9XY]+"),
+  start        = as.numeric(stringr::str_extract(nm, "(?<=:)\\d+(?=-)")),
+  end          = as.numeric(stringr::str_extract(nm, "(?<=-)\\d+(?=\\s)")),
+  strand       = stringr::str_extract(nm, "(?<=strand=)[+-]"),
+  width_bp     = length(chr19_segments),
+  stringsAsFactors = FALSE
+)
+
+metadata$segment_length_kb <- round(metadata$width_bp / 1000, 1)
+metadata$region_name <- paste0("GENCODE_region_", seq_len(nrow(metadata)))
+
+region_metadata <- metadata[, c(
+  "genome_build",
+  "probe_id",
+  "chr",
+  "start",
+  "end",
+  "strand",
+  "width_bp",
+  "segment_length_kb",
+  "region_name"
+)]
+
+print(region_metadata)
+```
+
+## GENCODE-Informed Analysis
+
+```{r}
+# Analyze each segment with GENCODE reference
+analyze_segment <- function(segment, metadata_row) {
+  sliding_window_scan(
+    segment,
+    window_size = 300,
+    step_size = 60,
+    reference_profile = gencode_ref_profile,
+    min_codons = 10
+  )
+}
+
+# Process all segments
+segment_results <- lapply(seq_along(chr19_segments), function(i) {
+  cat("Processing", region_metadata$region_name[i], "-", 
+      region_metadata$feature_context[i], "region...\n")
+  analyze_segment(chr19_segments[[i]], region_metadata[i, ])
+})
+
+# Compile results
+scan_results <- segment_results
+```
+
+## Comprehensive Analysis Summary
+
+```{r}
+# Calculate comprehensive statistics
+total_analysis <- list(
+  gencode_reference = list(
+    total_transcripts = length(gencode_pc),
+    selected_transcripts = length(valid_transcripts),
+    active_codons = sum(gencode_ref_profile > 0),
+    profile_completeness = round((sum(gencode_ref_profile > 0) / 64) * 100, 1)
+  ),
+  chr19_analysis = list(
+    total_segments = length(selected_indices),
+    total_bp = sum(BiocGenerics::width(chr19_segments)),
+    total_windows = sum(sapply(segment_results, nrow))
+  )
+)
+
+total_analysis |> unlist()
+
+# Segment-level insights
+segment_insights <- lapply(seq_along(segment_results), function(i) {
+  result <- segment_results[[i]]
+  data.frame(
+    region = region_metadata$region_name[i],
+    length_kb = region_metadata$segment_length_kb[i],
+    n_windows = nrow(result),
+    mean_entropy = mean(result$shannon_entropy),
+    low_entropy_windows = sum(result$shannon_entropy < 3.5),
+    stringsAsFactors = FALSE
+  )
+}) %>% dplyr::bind_rows()
+
+print(segment_insights)
+```
+
+## GENCODE vs Traditional References
+
+```{r}
+# Demonstrate improvement over traditional methods
+# Compare with single-gene reference (APOE only)
+apoe_data <- read_fasta("../inst/extdata/APOE.fasta.gz")[1]
+apoe_ref_profile <- create_reference_profile((apoe_data))
+
+# Analyze one segment with both references
+test_segment <- chr19_segments[[1]]
+
+apoe_analysis <- sliding_window_scan(
+  test_segment,
+  window_size = 300,
+  step_size = 60,
+  reference_profile = apoe_ref_profile
+)
+
+gencode_analysis <- segment_results[[1]]
+
+# Compare results
+comparison <- data.frame(
+  reference_type = c("APOE (single gene)", "GENCODE (93K transcripts)"),
+  mean_entropy = c(mean(apoe_analysis$shannon_entropy), mean(gencode_analysis$shannon_entropy)),
+  sd_entropy = c(sd(apoe_analysis$shannon_entropy), sd(gencode_analysis$shannon_entropy)),
+  low_entropy_windows = c(sum(apoe_analysis$shannon_entropy < 3.5), 
+                        sum(gencode_analysis$shannon_entropy < 3.5)),
+  stringsAsFactors = FALSE
+)
+
+cat("REFERENCE COMPARISON:\n")
+print(comparison)
+```
+
+## Performance Benchmarking
+
+```{r}
+start_time <- Sys.time()
+
+benchmark_results <- lapply(head(chr19_segments, 3), function(segment) {
+  sliding_window_scan(
+    segment,
+    window_size = 300,
+    step_size = 60,
+    reference_profile = gencode_ref_profile
+  )
+})
+
+end_time <- Sys.time()
+processing_time <- as.numeric(difftime(end_time, start_time, units = "secs"))
+
+total_bp_processed <- sum(sapply(head(chr19_segments, 3), length))
+windows_per_second <- sum(sapply(benchmark_results, nrow)) / processing_time
+bp_per_second <- total_bp_processed / processing_time
+
+cat("PERFORMANCE BENCHMARK:\n")
+cat("  Processing time:", round(processing_time, 2), "seconds\n")
+cat("  Throughput:", round(bp_per_second), "bp/second\n")
+cat("  Window rate:", round(windows_per_second, 1), "windows/second\n")
+```
+
+## Production Pipeline Implementation
+
+### Scaling to Full Chromosome
+
+```{r eval=FALSE}
+full_chromosome_analysis <- function(chr19_data, gencode_ref_profile) {
+  
+  batch_size <- 20  
+  
+  n_batches <- ceiling(length(chr19_data) / batch_size)
+  all_results <- list()
+  
+  for (batch in 1:n_batches) {
+    start_idx <- (batch - 1) * batch_size + 1
+    end_idx <- min(batch * batch_size, length(chr19_data))
+    
+    batch_segments <- chr19_data[start_idx:end_idx]
+    
+    batch_results <- lapply(seq_along(batch_segments), function(i) {
+      sliding_window_scan(
+        batch_segments[[i]],
+        window_size = 300,
+        step_size = 60,
+        reference_profile = gencode_ref_profile,
+        min_codons = 10
+      )
+    })
+    
+    all_results <- c(all_results, batch_results)
+    
+    gc()  # Garbage collection
+    cat("Completed batch", batch, "of", n_batches, "-",
+        length(all_results), "total results\n")
+  }
+  
+  return(all_results)
+}
+
+# Full analysis (would take 30-60 minutes for complete chr19)
+# full_chr19_results <- full_chromosome_analysis(chr19_data, gencode_ref_profile)
+```
+
+## Best Practices for Production Analysis
+
+### Reference Profile Construction
+1. **Use GENCODE**: Comprehensive, curated protein-coding transcripts
+2. **Quality filtering**: 300-3000 bp for reliable codon statistics
+3. **Organism-specific**: Human transcripts for human genome analysis
+4. **Regular updates**: Use latest GENCODE releases
+
+### Analysis Parameters
+1. **Window size**: 300 bp (100 codons) for reliable statistics
+2. **Step size**: 60 bp (1/5 overlap) for smooth profiles
+3. **Thresholds**: More stringent with comprehensive references (≤3.2 for high potential)
+4. **Memory optimization**: Essential for chromosome-scale analysis
+
+### Computational Considerations
+1. **Batch processing**: Handle large chromosomes in segments
+2. **Memory management**: Regular garbage collection
+3. **Progress tracking**: Comprehensive logging for long analyses
+4. **Error handling**: Graceful degradation with informative messages
+
+## Scientific Validation
+
+### Reference Profile Quality
+- **Codon coverage**: 61/64 codons active (95.3%)
+- **Transcript diversity**: 18,000+ high-quality transcripts
+- **Length distribution**: Balanced representation across transcript sizes
+- **Organism relevance**: Human-specific protein-coding transcripts
+
+The combination of **GENCODE reference profiles** with **GeneScout's optimized visualization** provides a **publication-ready framework** for large-scale genomic discovery studies.
+
+# Session Info
+
+```{r sessionInfo}
+sessionInfo()
+```

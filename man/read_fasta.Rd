@@ -7,10 +7,10 @@
 read_fasta(file_path)
 }
 \arguments{
-\item{file_path}{Character string specifying the path to the FASTA file}
+\item{file_path}{Character string specifying the path to a FASTA or FASTA.GZ file}
 }
 \value{
-A DNAStringSet object containing the DNA sequences
+A \code{DNAStringSet} object containing the DNA sequences
 }
 \description{
 Read DNA sequences from a FASTA file and convert to Biostrings DNAStringSet.

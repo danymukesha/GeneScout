@@ -30,6 +30,7 @@ test_that("calculate_shannon_entropy works correctly", {
     freqs_uniform <- rep(1 / 64, 64)
     names(freqs_uniform) <- .get_all_codons()
 
+    expect_equal(calculate_shannon_entropy(NULL), 0)
     entropy_uniform <- calculate_shannon_entropy(freqs_uniform)
     expect_equal(entropy_uniform, 6, tolerance = 0.001)
 
@@ -200,7 +201,81 @@ test_that("entropy_peak_detection works correctly", {
     expect_no_error(
         plot_candidate_orfs(result, candidates, peaks)
     )
+    expect_no_error(
+        plot_entropy_profile(result, peaks, show_peaks = TRUE)
+    )
 })
+
+test_that("entropy_peak_detection detects peaks with quantile method", {
+    # Fake sequence
+    seq_test <- paste(rep("ATGATGATGTTATTATTACGCCGCCGCC", 30), collapse = "")
+
+    # Sliding window scan (fake example)
+    result <- sliding_window_scan(seq_test, window_size = 150, step_size = 30)
+
+    # Run peak detection
+    peaks <- entropy_peak_detection(result, metric = "shannon_entropy", method = "quantile", threshold = 0.2, min_peak_width = 1)
+
+    # Check class
+    expect_s3_class(peaks, "entropy_peaks")
+
+    # Columns exist
+    expect_true(all(c(
+        "peak_id", "start_window", "end_window", "num_windows",
+        "start_bp", "end_bp", "metric_value_mean", "metric_value_min"
+    ) %in% names(peaks)))
+
+    # Peak widths ≥ min_peak_width
+    expect_true(all(peaks$num_windows >= 1))
+
+    expect_true(all(peaks$start_bp < peaks$end_bp))
+
+    # Mean/min values correspond to scan_result
+    for (i in seq_len(nrow(peaks))) {
+        expect_equal(
+            peaks$metric_value_mean[i],
+            mean(result$shannon_entropy[peaks$start_window[i]:peaks$end_window[i]])
+        )
+        expect_equal(
+            peaks$metric_value_min[i],
+            min(result$shannon_entropy[peaks$start_window[i]:peaks$end_window[i]])
+        )
+    }
+})
+
+test_that("entropy_peak_detection works with sd method", {
+    seq_test <- paste(rep("ATGATGATGTTATTATTACGCCGCCGCC", 30), collapse = "")
+    result <- sliding_window_scan(seq_test, window_size = 150, step_size = 30)
+
+    peaks <- entropy_peak_detection(result, method = "sd", threshold = 0.5, min_peak_width = 1)
+
+    expect_s3_class(peaks, "entropy_peaks")
+    expect_true(all(peaks$num_windows >= 1))
+})
+
+test_that("entropy_peak_detection warns when no peaks found", {
+    seq_test <- paste(rep("ATGATG", 5), collapse = "")
+    result <- sliding_window_scan(seq_test, window_size = 30, step_size = 30)
+
+    # Very high threshold to ensure no peaks
+    expect_warning(peaks <- entropy_peak_detection(result, threshold = 0.99), "No peaks detected")
+    expect_true(is.data.frame(peaks))
+    expect_equal(nrow(peaks), 0)
+})
+
+test_that("entropy_peak_detection handles kl_divergence metric", {
+    seq_test <- paste(rep("ATGATGATGTTATTATTACGCCGCCGCC", 20), collapse = "")
+
+    # Create a fake result with kl_divergence values
+    result <- sliding_window_scan(seq_test, window_size = 150, step_size = 30)
+    result$kl_divergence <- result$shannon_entropy * 1.2 # just example
+
+    peaks <- entropy_peak_detection(result, metric = "kl_divergence", method = "quantile", threshold = 0.2)
+
+    expect_s3_class(peaks, "entropy_peaks")
+    expect_true(all(peaks$num_windows >= 3))
+})
+
 
 test_that("find_candidate_orfs works correctly", {
     seq_test <- paste(rep("ATGATGATGTTATTATTACGCCGCCGCC", 30), collapse = "")
@@ -407,6 +482,15 @@ test_that("extract_known_genes extracts gene sequences correctly", {
         Biostrings::reverseComplement(Biostrings::DNAString(expected_gene2))
     )
     expect_equal(genes[[2]], expected_gene2)
+
+    extract_known_genes(
+        gtf_file = gtf_file,
+        genome_fasta = fasta_file,
+        feature_type = "gene",
+        min_length = 50,
+        max_genes = 1000
+    )
+    expect_error(extract_known_genes())
 })
 
 
@@ -521,6 +605,14 @@ test_that("extract_known_genes requires rtracklayer when available", {
     expect_error(
         read_fasta("README.md")
     )
+
+    fasta_file_empty <- tempfile(fileext = ".fa")
+    writeLines(
+        c(">", "ATGA"),
+        fasta_file_empty
+    )
+    expect_no_error(read_fasta(fasta_file_empty))
+
     # This test would require actual test data files
     # Skip for now as it needs real GTF and FASTA files
     skip("Requires test GTF and FASTA data files")
