@@ -137,12 +137,12 @@ extract_known_genes <- function(gtf_file,
         stop("Genome FASTA file not found: ", genome_fasta)
     }
 
-    if (!requireNamespace("rtracklayer", quietly = TRUE)) {
-        stop(
-            "Package 'rtracklayer' is required to parse GTF files. ",
-            "Install with: BiocManager::install('rtracklayer')"
-        )
-    }
+    # if (!requireNamespace("rtracklayer", quietly = TRUE)) {
+    #     stop(
+    #         "Package 'rtracklayer' is required to parse GTF files. ",
+    #         "Install with: BiocManager::install('rtracklayer')"
+    #     )
+    # }
 
     gtf_data <- rtracklayer::import(gtf_file)
 

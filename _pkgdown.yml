@@ -66,6 +66,20 @@ reference:
     contents:
       - GeneScout-extdata
 
+articles:
+  - title: "Getting Started"
+    contents:
+      - GeneScout
+
+  - title: "Gene-Level Analysis"
+    contents:
+      - GeneScout_on_APOE-and-chr19
+
+  - title: "Genome-Scale Analysis"
+    contents:
+      - gencode-chr19-analysis
+
+
 development:
   mode: auto
 

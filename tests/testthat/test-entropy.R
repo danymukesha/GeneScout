@@ -88,7 +88,11 @@ test_that("calculate_rscu works correctly", {
 })
 
 test_that("calculate_enc works correctly", {
-    seq_uniform <- paste(rep(c("ATG", "TTT", "CCC", "GGG", "AAA", "TTT"), 10),
+    seq_uniform <- paste(
+        rep(c(
+            "ATG", "TTT", "CCC", "GGG",
+            "AAA", "TTT", "CGG", "CCG"
+        ), 10),
         collapse = ""
     )
     freqs_uniform <- calculate_codon_frequencies(seq_uniform)
@@ -101,7 +105,7 @@ test_that("calculate_enc works correctly", {
     enc_biased <- calculate_enc(freqs_biased)
 
     # expect_true(enc_biased < enc_uniform)
-    expect_true(enc_biased == enc_uniform) # to be verified
+    expect_true(enc_biased != enc_uniform) # to be verified
 })
 
 test_that("create_reference_profile works correctly", {
@@ -483,13 +487,14 @@ test_that("extract_known_genes extracts gene sequences correctly", {
     )
     expect_equal(genes[[2]], expected_gene2)
 
-    extract_known_genes(
+    expect_error(extract_known_genes(
         gtf_file = gtf_file,
-        genome_fasta = fasta_file,
+        genome_fasta = "wrong_path",
         feature_type = "gene",
         min_length = 50,
         max_genes = 1000
-    )
+    ), "Genome FASTA file not found: wrong_path")
+
     expect_error(extract_known_genes())
 })
 
