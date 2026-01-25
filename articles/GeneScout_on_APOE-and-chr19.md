@@ -24,8 +24,9 @@ Here we demonstrate it using:
 ## Load Data
 
 ``` r
-chr19 <- GeneScout::read_fasta("../data/chr19.fasta")
-apoe_sequence <-  GeneScout::read_fasta("../data/APOE.fasta")[1]
+# fasta_path <- system.file("extdata", "APOE.fasta.gz", package = "GeneScout")
+chr19 <- GeneScout::read_fasta("../inst/extdata/chr19.fasta.gz")
+apoe_sequence <-  GeneScout::read_fasta("../inst/extdata/APOE.fasta.gz")[1]
 ```
 
 ``` r
@@ -214,7 +215,7 @@ plot_entropy_profile(
 )
 ```
 
-![](GeneScout_on_APOE-and-chr19_files/figure-html/unnamed-chunk-11-1.png)
+![](GeneScout_on_APOE-and-chr19_files/figure-html/unnamed-chunk-12-1.png)
 
 #### Peaks Highlighted
 
@@ -227,7 +228,7 @@ plot_entropy_profile(
 )
 ```
 
-![](GeneScout_on_APOE-and-chr19_files/figure-html/unnamed-chunk-12-1.png)
+![](GeneScout_on_APOE-and-chr19_files/figure-html/unnamed-chunk-13-1.png)
 
 #### Candidate ORFs
 
@@ -235,7 +236,7 @@ plot_entropy_profile(
 plot_candidate_orfs(scan_result, candidates, peaks, metric = "shannon_entropy")
 ```
 
-![](GeneScout_on_APOE-and-chr19_files/figure-html/unnamed-chunk-13-1.png)
+![](GeneScout_on_APOE-and-chr19_files/figure-html/unnamed-chunk-14-1.png)
 
 ------------------------------------------------------------------------
 

@@ -78,9 +78,7 @@ $$H = - \sum\limits_{i = 1}^{64}P(i)\log_{2}P(i)$$
 $$D_{KL}(P \parallel Q) = \sum\limits_{i}P(i)\log_{2}\left( \frac{P(i)}{Q(i)} \right)$$
 
 Compares the observed codon distribution ($P$) to the reference
-distribution ($Q$).
-
-There are different use cases, few of them would be:
+distribution ($Q$). There are different use cases, few of them would be:
 
 1.  **De novo gene discovery**: to find potential coding regions in
     unannotated genomes
@@ -92,7 +90,24 @@ There are different use cases, few of them would be:
 5.  **Evolutionary studies**: to analze codon usage patterns across
     lineages
 
-## Acknowledgments
+## Large-Scale Analysis
+
+For comprehensive chromosome-scale analysis examples, see: -
+**`chr19-large-scale-analysis.Rmd`**: Full chromosome 19 analysis with
+APOE/TP53 references - **`gencode-chr19-analysis.Rmd`**:
+Production-ready GENCODE-informed analysis (recommended) -
+**Memory-optimized processing** for genome-wide studies - **Performance
+benchmarking** and efficiency metrics - **Publication-ready
+visualizations** with biological context
+
+### GENCODE Integration
+
+GeneScout now supports **GENCODE protein-coding transcripts** for: -
+**Comprehensive human reference**: 93,000+ curated transcripts -
+**Robust codon bias patterns**: Organism-specific analysis -
+**Scientifically rigorous**: High-quality annotation standards -
+**Production pipelines**: Scalable chromosome-level analysis \##
+Acknowledgments
 
 Built on top of Bioconductor’s excellent `Biostrings`, and `coRdon`
 packages.

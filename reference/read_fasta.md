@@ -13,11 +13,11 @@ read_fasta(file_path)
 
 - file_path:
 
-  Character string specifying the path to the FASTA file
+  Character string specifying the path to a FASTA or FASTA.GZ file
 
 ## Value
 
-A DNAStringSet object containing the DNA sequences
+A `DNAStringSet` object containing the DNA sequences
 
 ## Examples
 

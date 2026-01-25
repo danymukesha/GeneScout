@@ -34,12 +34,7 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="articles/GeneScout.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/GeneScout_on_APOE-and-chr19.html">GeneScout on APOE and chr19</a></li>
-  </ul>
-</li>
+<li class="nav-item"><a class="nav-link" href="articles/index.html">Articles</a></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -142,8 +137,7 @@
 <h3 id="kullback-leibler-divergence">Kullback-Leibler Divergence<a class="anchor" aria-label="anchor" href="#kullback-leibler-divergence"></a>
 </h3>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>K</mi><mi>L</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="false" form="postfix">∥</mo><mi>Q</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><munder><mo>∑</mo><mi>i</mi></munder><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>log</mo><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">D_{KL}(P \| Q) = \sum_{i} P(i) \log_2 \left( \frac{P(i)}{Q(i)} \right)</annotation></semantics></math></p>
-<p>Compares the observed codon distribution (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>) to the reference distribution (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>).</p>
-<p>There are different use cases, few of them would be:</p>
+<p>Compares the observed codon distribution (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>) to the reference distribution (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>). There are different use cases, few of them would be:</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>De novo gene discovery</strong>: to find potential coding regions in unannotated genomes</li>
@@ -159,9 +153,15 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
+<h2 id="large-scale-analysis">Large-Scale Analysis<a class="anchor" aria-label="anchor" href="#large-scale-analysis"></a>
 </h2>
+<p>For comprehensive chromosome-scale analysis examples, see: - <strong><code>chr19-large-scale-analysis.Rmd</code></strong>: Full chromosome 19 analysis with APOE/TP53 references - <strong><code>gencode-chr19-analysis.Rmd</code></strong>: Production-ready GENCODE-informed analysis (recommended) - <strong>Memory-optimized processing</strong> for genome-wide studies - <strong>Performance benchmarking</strong> and efficiency metrics - <strong>Publication-ready visualizations</strong> with biological context</p>
+<div class="section level3">
+<h3 id="gencode-integration">GENCODE Integration<a class="anchor" aria-label="anchor" href="#gencode-integration"></a>
+</h3>
+<p>GeneScout now supports <strong>GENCODE protein-coding transcripts</strong> for: - <strong>Comprehensive human reference</strong>: 93,000+ curated transcripts - <strong>Robust codon bias patterns</strong>: Organism-specific analysis - <strong>Scientifically rigorous</strong>: High-quality annotation standards - <strong>Production pipelines</strong>: Scalable chromosome-level analysis ## Acknowledgments</p>
 <p>Built on top of Bioconductor’s excellent <code>Biostrings</code>, and <code>coRdon</code> packages. <!-- GeneScout builds upon Bioconductor infrastructure, particularly --> <!-- Biostrings for sequence manipulation and coRdon for codon usage --> <!-- bias methodology. --></p>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

@@ -250,12 +250,12 @@ For large genomes, process chromosome by chromosome:
 
 ``` r
 # Read genome FASTA file (https://parasite.wormbase.org/index.html)
-genome <- read_fasta("../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa")
+genome <- read_fasta("../inst/extdata/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa")
 
 # Extract known genes from GTF annotation file
 known_genes <- extract_known_genes(
-  gtf_file = "../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.canonical_geneset.gtf",
-  genome_fasta = "../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa",
+  gtf_file = "../inst/extdata/acanthocheilonema_viteae.PRJEB1697.WBPS19.canonical_geneset.gtf",
+  genome_fasta = "../inst/extdata/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa",
   feature_type = "gene",
   min_length = 150,
   max_genes = 1000
@@ -328,13 +328,13 @@ enc_biased <- calculate_enc(freqs_biased)
 print(paste("Uniform sequence ENC:", round(enc_uniform, 2)))
 ```
 
-    ## [1] "Uniform sequence ENC: 61"
+    ## [1] "Uniform sequence ENC: 16"
 
 ``` r
 print(paste("Biased sequence ENC:", round(enc_biased, 2)))
 ```
 
-    ## [1] "Biased sequence ENC: 61"
+    ## [1] "Biased sequence ENC: 2"
 
 ENC ranges from 20 (extreme bias) to 61 (no bias).
 
@@ -473,7 +473,7 @@ sessionInfo()
     ##  [3] rjson_0.2.23                xfun_0.56                  
     ##  [5] bslib_0.9.0                 ggplot2_4.0.1              
     ##  [7] lattice_0.22-7              Biobase_2.70.0             
-    ##  [9] vctrs_0.7.0                 tools_4.5.2                
+    ##  [9] vctrs_0.7.1                 tools_4.5.2                
     ## [11] bitops_1.0-9                generics_0.1.4             
     ## [13] stats4_4.5.2                curl_7.0.0                 
     ## [15] parallel_4.5.2              tibble_3.3.1               

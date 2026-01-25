@@ -18,7 +18,7 @@
 - [`calculate_rscu()`](https://danymukesha.github.io/GeneScout/reference/calculate_rscu.md)
   : Calculate Relative Synonymous Codon Usage (RSCU)
 - [`calculate_enc()`](https://danymukesha.github.io/GeneScout/reference/calculate_enc.md)
-  : Calculate Effective Number of Codons (ENC)
+  : Calculate the Effective Number of Codons (ENC)
 - [`find_orfs_in_sequence()`](https://danymukesha.github.io/GeneScout/reference/find_orfs_in_sequence.md)
   : Find ORFs in Sequence
 - [`find_candidate_orfs()`](https://danymukesha.github.io/GeneScout/reference/find_candidate_orfs.md)
@@ -48,3 +48,8 @@
   : Validate DNA Sequence
 - [`read_fasta()`](https://danymukesha.github.io/GeneScout/reference/read_fasta.md)
   : Read FASTA File
+
+## Data
+
+- [`GeneScout-extdata`](https://danymukesha.github.io/GeneScout/reference/GeneScout-extdata.md)
+  : Example FASTA and GTF files bundled with GeneScout

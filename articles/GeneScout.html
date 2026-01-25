@@ -31,12 +31,7 @@
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/GeneScout.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/GeneScout_on_APOE-and-chr19.html">GeneScout on APOE and chr19</a></li>
-  </ul>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -60,7 +55,7 @@
                         <h4 data-toc-skip class="author">Dany
 Mukesha</h4>
             
-            <h4 data-toc-skip class="date">2026-01-21</h4>
+            <h4 data-toc-skip class="date">2026-01-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/danymukesha/GeneScout/blob/main/vignettes/GeneScout.Rmd" class="external-link"><code>vignettes/GeneScout.Rmd</code></a></small>
       <div class="d-none name"><code>GeneScout.Rmd</code></div>
@@ -307,12 +302,12 @@ profile:</p>
 <p>For large genomes, process chromosome by chromosome:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read genome FASTA file (https://parasite.wormbase.org/index.html)</span></span>
-<span><span class="va">genome</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_fasta.html">read_fasta</a></span><span class="op">(</span><span class="st">"../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa"</span><span class="op">)</span></span>
+<span><span class="va">genome</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_fasta.html">read_fasta</a></span><span class="op">(</span><span class="st">"../inst/extdata/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract known genes from GTF annotation file</span></span>
 <span><span class="va">known_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_known_genes.html">extract_known_genes</a></span><span class="op">(</span></span>
-<span>  gtf_file <span class="op">=</span> <span class="st">"../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.canonical_geneset.gtf"</span>,</span>
-<span>  genome_fasta <span class="op">=</span> <span class="st">"../data/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa"</span>,</span>
+<span>  gtf_file <span class="op">=</span> <span class="st">"../inst/extdata/acanthocheilonema_viteae.PRJEB1697.WBPS19.canonical_geneset.gtf"</span>,</span>
+<span>  genome_fasta <span class="op">=</span> <span class="st">"../inst/extdata/acanthocheilonema_viteae.PRJEB1697.WBPS19.genomic.fa"</span>,</span>
 <span>  feature_type <span class="op">=</span> <span class="st">"gene"</span>,</span>
 <span>  min_length <span class="op">=</span> <span class="fl">150</span>,</span>
 <span>  max_genes <span class="op">=</span> <span class="fl">1000</span></span>
@@ -398,10 +393,10 @@ usage</li>
 <span><span class="va">enc_biased</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_enc.html">calculate_enc</a></span><span class="op">(</span><span class="va">freqs_biased</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Uniform sequence ENC:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">enc_uniform</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "Uniform sequence ENC: 61"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "Uniform sequence ENC: 16"</span></span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Biased sequence ENC:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">enc_biased</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "Biased sequence ENC: 61"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "Biased sequence ENC: 2"</span></span></code></pre>
 <p>ENC ranges from 20 (extreme bias) to 61 (no bias).</p>
 </div>
 </div>
@@ -560,7 +555,7 @@ applications. <em>Nucleic Acids Research</em>, 15(3), 1281-1295.</li>
 <span><span class="co">##  [3] rjson_0.2.23                xfun_0.56                  </span></span>
 <span><span class="co">##  [5] bslib_0.9.0                 ggplot2_4.0.1              </span></span>
 <span><span class="co">##  [7] lattice_0.22-7              Biobase_2.70.0             </span></span>
-<span><span class="co">##  [9] vctrs_0.7.0                 tools_4.5.2                </span></span>
+<span><span class="co">##  [9] vctrs_0.7.1                 tools_4.5.2                </span></span>
 <span><span class="co">## [11] bitops_1.0-9                generics_0.1.4             </span></span>
 <span><span class="co">## [13] stats4_4.5.2                curl_7.0.0                 </span></span>
 <span><span class="co">## [15] parallel_4.5.2              tibble_3.3.1               </span></span>
