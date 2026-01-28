@@ -40,7 +40,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_codon_frequencies</span><span class="op">(</span><span class="va">sequence</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_codon_frequencies</span><span class="op">(</span><span class="va">sequence</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span>, remove_zeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -53,6 +53,11 @@
 
 <dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
 <dd><p>Boolean indicating whether to normalize frequencies (default: TRUE)</p></dd>
+
+
+<dt id="arg-remove-zeros">remove_zeros<a class="anchor" aria-label="anchor" href="#arg-remove-zeros"></a></dt>
+<dd><p>Boolean should REMOVE codons with zero frequency if TRUE.
+Default set to TRUE.</p></dd>
 
 </dl></div>
     <div class="section level2">

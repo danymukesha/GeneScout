@@ -77,7 +77,7 @@ df <- data.frame(
     frequency = as.numeric(gencode_ref_profile)
 )
 
-df$aa <- sapply(df$codon, function(x) seqinr::translate(s2c(x)))
+df$aa <- GeneScout::translate_codons(as.character(df$codon))
 df$codon <- factor(df$codon, levels = df$codon)
 ```
 
@@ -402,19 +402,19 @@ cat("PERFORMANCE BENCHMARK:\n")
 cat("  Processing time:", round(processing_time, 2), "seconds\n")
 ```
 
-    ##   Processing time: 1.31 seconds
+    ##   Processing time: 2.08 seconds
 
 ``` r
 cat("  Throughput:", round(bp_per_second), "bp/second\n")
 ```
 
-    ##   Throughput: 66558 bp/second
+    ##   Throughput: 42035 bp/second
 
 ``` r
 cat("  Window rate:", round(windows_per_second, 1), "windows/second\n")
 ```
 
-    ##   Window rate: 1099.7 windows/second
+    ##   Window rate: 694.5 windows/second
 
 ### Production Pipeline Implementation
 
@@ -529,7 +529,7 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##  [1] SummarizedExperiment_1.40.0 gtable_0.3.6               
     ##  [3] rjson_0.2.23                xfun_0.56                  
-    ##  [5] bslib_0.9.0                 lattice_0.22-7             
+    ##  [5] bslib_0.10.0                lattice_0.22-7             
     ##  [7] Biobase_2.70.0              vctrs_0.7.1                
     ##  [9] tools_4.5.2                 bitops_1.0-9               
     ## [11] generics_0.1.4              stats4_4.5.2               

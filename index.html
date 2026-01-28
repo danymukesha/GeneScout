@@ -98,26 +98,92 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/danymukesha/GeneScout" class="external-link">GeneScout</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create a reference profile from known genes</span></span>
-<span><span class="va">known_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ATGATGATG"</span>, <span class="st">"GCCGCCGCC"</span>, <span class="st">"TTATTATTA"</span><span class="op">)</span></span>
-<span><span class="va">ref_profile</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_reference_profile.html">create_reference_profile</a></span><span class="op">(</span><span class="va">known_genes</span><span class="op">)</span></span>
+<span><span class="va">fasta_tp53</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"TP53.fasta.gz"</span>, package <span class="op">=</span> <span class="st">"GeneScout"</span><span class="op">)</span></span>
+<span><span class="va">fasta_apoe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"APOE.fasta.gz"</span>, package <span class="op">=</span> <span class="st">"GeneScout"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Scan a genomic sequence</span></span>
-<span><span class="va">sequence</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"ATGATGATGTTATTATTACGCCGCCGCC"</span>, <span class="fl">30</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span><span class="va">known_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  APOE <span class="op">=</span> <span class="fu"><a href="reference/read_fasta.html">read_fasta</a></span><span class="op">(</span><span class="va">fasta_apoe</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  TP53 <span class="op">=</span> <span class="fu"><a href="reference/read_fasta.html">read_fasta</a></span><span class="op">(</span><span class="va">fasta_tp53</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">known_genes</span></span>
+<span><span class="co">#&gt; $APOE</span></span>
+<span><span class="co">#&gt; 2075-letter DNAString object</span></span>
+<span><span class="co">#&gt; seq: GGGAGCCGGCCCAGCTGGGGGCCCAGGTGGTGCACC...GGACAGACAAGCAGGCGTAGGATGGGCAATTGGATT</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $TP53</span></span>
+<span><span class="co">#&gt; 21089-letter DNAString object</span></span>
+<span><span class="co">#&gt; seq: CTTTTGAAAGCACTGTGTTCCTTAGCACCGCGGGTC...CTTTCTTACTAGGGAATGCCAAACACTCTCCCCAGG</span></span>
+<span></span>
+<span><span class="va">ref_profile</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_reference_profile.html">create_reference_profile</a></span><span class="op">(</span><span class="fu"><a href="reference/read_fasta.html">read_fasta</a></span><span class="op">(</span><span class="va">fasta_apoe</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">ref_profile</span></span>
+<span><span class="co">#&gt;         AAA         CAA         GAA         TAA         ACA         CCA </span></span>
+<span><span class="co">#&gt; 0.021952221 0.015496277 0.019114222 0.008485817 0.011295637 0.029686270 </span></span>
+<span><span class="co">#&gt;         GCA         TCA         AGA         CGA         GGA         TGA </span></span>
+<span><span class="co">#&gt; 0.013522761 0.013438225 0.029329005 0.006455944 0.031556129 0.012601921 </span></span>
+<span><span class="co">#&gt;         ATA         CTA         GTA         TTA         AAC         CAC </span></span>
+<span><span class="co">#&gt; 0.003533409 0.010628405 0.002837999 0.004980587 0.009265763 0.016774383 </span></span>
+<span><span class="co">#&gt;         GAC         TAC         ACC         CCC         GCC         TCC </span></span>
+<span><span class="co">#&gt; 0.019753275 0.007066818 0.016304403 0.036226750 0.023483935 0.024179345 </span></span>
+<span><span class="co">#&gt;         AGC         CGC         GGC         TGC         ATC         CTC </span></span>
+<span><span class="co">#&gt; 0.018390633 0.007179533 0.016388939 0.017554330 0.007123175 0.029103575 </span></span>
+<span><span class="co">#&gt;         GTC         TTC         AAG         CAG         GAG         TAG </span></span>
+<span><span class="co">#&gt; 0.012714636 0.013550940 0.017667044 0.028267271 0.034337770 0.007818585 </span></span>
+<span><span class="co">#&gt;         ACG         CCG         GCG         TCG         AGG         CGG </span></span>
+<span><span class="co">#&gt; 0.005704176 0.015665350 0.005704176 0.005704176 0.031302521 0.013663655 </span></span>
+<span><span class="co">#&gt;         GGG         TGG         ATG         CTG         GTG         TTG </span></span>
+<span><span class="co">#&gt; 0.041545481 0.026820093 0.009096691 0.030353502 0.021200453 0.009848459 </span></span>
+<span><span class="co">#&gt;         AAT         CAT         GAT         TAT         ACT         CCT </span></span>
+<span><span class="co">#&gt; 0.009989352 0.009153049 0.009181227 0.004980587 0.007734049 0.024122988 </span></span>
+<span><span class="co">#&gt;         GCT         TCT         AGT         CGT         GGT         TGT </span></span>
+<span><span class="co">#&gt; 0.014800867 0.017779759 0.010712941 0.003533409 0.016191688 0.012573743 </span></span>
+<span><span class="co">#&gt;         ATT         CTT         GTT         TTT </span></span>
+<span><span class="co">#&gt; 0.007790407 0.012742815 0.010572048 0.013466404</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">GeneScout</span><span class="fu">::</span><span class="fu"><a href="reference/codon_frequency_df.html">codon_frequency_df</a></span><span class="op">(</span><span class="va">ref_profile</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/plot_codon_usage_panel.html">plot_codon_usage_panel</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-visualize-freqs-1.png" alt="" width="100%"></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># ggsave(filename = "inst/apoe.png", </span></span>
+<span><span class="co">#        plot_codon_usage_panel(df), </span></span>
+<span><span class="co">#        height = 8, width = 12)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Scan a genomic sequence</span></span>
+<span><span class="va">fasta_chr19</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"chr19.fasta.gz"</span>, package <span class="op">=</span> <span class="st">"GeneScout"</span><span class="op">)</span></span>
+<span><span class="va">sequence</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_fasta.html">read_fasta</a></span><span class="op">(</span><span class="va">fasta_chr19</span><span class="op">)</span><span class="op">[[</span><span class="fl">30</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">sequence</span></span>
+<span><span class="co">#&gt; 61764-letter DNAString object</span></span>
+<span><span class="co">#&gt; seq: TCCTACTGGGCATGCCCCTGGCTTTACCCAGAGGGG...CACTCTGACGCACACTACGTCTGGAGCCACAGAGTG</span></span>
+<span></span>
 <span><span class="va">scan_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sliding_window_scan.html">sliding_window_scan</a></span><span class="op">(</span></span>
 <span>  <span class="va">sequence</span>,</span>
 <span>  window_size <span class="op">=</span> <span class="fl">300</span>,</span>
 <span>  step_size <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  reference_profile <span class="op">=</span> <span class="va">ref_profile</span></span>
 <span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Detect entropy peaks</span></span>
+<span><span class="va">scan_result</span></span>
+<span><span class="co">#&gt; GeneScout Sliding Window Scan Results</span></span>
+<span><span class="co">#&gt; =======================================</span></span>
+<span><span class="co">#&gt; Number of windows: 2049 </span></span>
+<span><span class="co">#&gt; Sequence range: 1 - 61740 bp</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Entropy Statistics:</span></span>
+<span><span class="co">#&gt;   Mean Shannon Entropy: 5.216 bits</span></span>
+<span><span class="co">#&gt;   Std. Dev. Shannon Entropy: 0.224 bits</span></span>
+<span><span class="co">#&gt;   Min Shannon Entropy: 3.226 bits</span></span>
+<span><span class="co">#&gt;   Max Shannon Entropy: 5.582 bits</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; KL Divergence Statistics:</span></span>
+<span><span class="co">#&gt;   Mean KL Divergence: 0.879 </span></span>
+<span><span class="co">#&gt;   Std. Dev. KL Divergence: 0.361</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Detect entropy peaks and find candidate ORFs</span></span>
 <span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/entropy_peak_detection.html">entropy_peak_detection</a></span><span class="op">(</span><span class="va">scan_result</span>, threshold <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Find candidate ORFs</span></span>
 <span><span class="va">candidates</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/find_candidate_orfs.html">find_candidate_orfs</a></span><span class="op">(</span><span class="va">sequence</span>, <span class="va">scan_result</span>, <span class="va">peaks</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Visualize results</span></span>
-<span><span class="fu"><a href="reference/plot_candidate_orfs.html">plot_candidate_orfs</a></span><span class="op">(</span><span class="va">scan_result</span>, <span class="va">candidates</span>, <span class="va">peaks</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/plot_candidate_orfs.html">plot_candidate_orfs</a></span><span class="op">(</span><span class="va">scan_result</span>, <span class="va">candidates</span>, <span class="va">peaks</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: ggrepel: 207 unlabeled data points (too many overlaps). Consider</span></span>
+<span><span class="co">#&gt; increasing max.overlaps</span></span></code></pre></div>
+<p><img src="reference/figures/README-detect-entropy-1.png" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="theory">Theory<a class="anchor" aria-label="anchor" href="#theory"></a>
@@ -150,18 +216,13 @@
 <li>
 <strong>Evolutionary studies</strong>: to analze codon usage patterns across lineages</li>
 </ol>
+<!-- ## Large-Scale Analysis --><!-- For chromosome-scale analysis examples, see: --><!-- - **`chr19-large-scale-analysis.Rmd`**: Full chromosome 19 analysis with APOE/TP53 references --><!-- - **`gencode-chr19-analysis.Rmd`**: GENCODE-informed analysis (recommended) --><!-- - **Memory-optimized processing** for genome-wide studies --><!-- - **Performance benchmarking** and efficiency metrics --><!-- - **Visualizations** with biological context  --><!-- ### GENCODE Integration --><!-- GeneScout now supports **GENCODE protein-coding transcripts** for: --><!-- - **Human reference**: 93,000+ curated transcripts --><!-- - **Robust codon bias patterns**: Organism-specific analysis --><!-- - **Scientifically rigorous**: High-quality annotation standards --><!-- - **Production pipelines**: Scalable chromosome-level analysis -->
 </div>
 </div>
 <div class="section level2">
-<h2 id="large-scale-analysis">Large-Scale Analysis<a class="anchor" aria-label="anchor" href="#large-scale-analysis"></a>
+<h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
 </h2>
-<p>For comprehensive chromosome-scale analysis examples, see: - <strong><code>chr19-large-scale-analysis.Rmd</code></strong>: Full chromosome 19 analysis with APOE/TP53 references - <strong><code>gencode-chr19-analysis.Rmd</code></strong>: Production-ready GENCODE-informed analysis (recommended) - <strong>Memory-optimized processing</strong> for genome-wide studies - <strong>Performance benchmarking</strong> and efficiency metrics - <strong>Publication-ready visualizations</strong> with biological context</p>
-<div class="section level3">
-<h3 id="gencode-integration">GENCODE Integration<a class="anchor" aria-label="anchor" href="#gencode-integration"></a>
-</h3>
-<p>GeneScout now supports <strong>GENCODE protein-coding transcripts</strong> for: - <strong>Comprehensive human reference</strong>: 93,000+ curated transcripts - <strong>Robust codon bias patterns</strong>: Organism-specific analysis - <strong>Scientifically rigorous</strong>: High-quality annotation standards - <strong>Production pipelines</strong>: Scalable chromosome-level analysis ## Acknowledgments</p>
 <p>Built on top of Bioconductor’s excellent <code>Biostrings</code>, and <code>coRdon</code> packages. <!-- GeneScout builds upon Bioconductor infrastructure, particularly --> <!-- Biostrings for sequence manipulation and coRdon for codon usage --> <!-- bias methodology. --></p>
-</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

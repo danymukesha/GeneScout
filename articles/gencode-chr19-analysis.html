@@ -55,7 +55,7 @@
                         <h4 data-toc-skip class="author">Dany
 Mukesha</h4>
             
-            <h4 data-toc-skip class="date">2026-01-25</h4>
+            <h4 data-toc-skip class="date">2026-01-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/danymukesha/GeneScout/blob/main/vignettes/gencode-chr19-analysis.Rmd" class="external-link"><code>vignettes/gencode-chr19-analysis.Rmd</code></a></small>
       <div class="d-none name"><code>gencode-chr19-analysis.Rmd</code></div>
@@ -134,7 +134,7 @@ references.</p>
 <span>    frequency <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">gencode_ref_profile</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">df</span><span class="op">$</span><span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">codon</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">seqinr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/seqinr/man/translate.html" class="external-link">translate</a></span><span class="op">(</span><span class="fu">s2c</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">df</span><span class="op">$</span><span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu">GeneScout</span><span class="fu">::</span><span class="fu"><a href="../reference/translate_codons.html">translate_codons</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">codon</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">df</span><span class="op">$</span><span class="va">codon</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">codon</span>, levels <span class="op">=</span> <span class="va">df</span><span class="op">$</span><span class="va">codon</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">aa</span>, y <span class="op">=</span> <span class="va">frequency</span>, fill <span class="op">=</span> <span class="va">codon</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -419,13 +419,13 @@ references.</p>
 <pre><code><span><span class="co">## PERFORMANCE BENCHMARK:</span></span></code></pre>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Processing time:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">processing_time</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"seconds\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   Processing time: 1.31 seconds</span></span></code></pre>
+<pre><code><span><span class="co">##   Processing time: 2.08 seconds</span></span></code></pre>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Throughput:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">bp_per_second</span><span class="op">)</span>, <span class="st">"bp/second\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   Throughput: 66558 bp/second</span></span></code></pre>
+<pre><code><span><span class="co">##   Throughput: 42035 bp/second</span></span></code></pre>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Window rate:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">windows_per_second</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"windows/second\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   Window rate: 1099.7 windows/second</span></span></code></pre>
+<pre><code><span><span class="co">##   Window rate: 694.5 windows/second</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="production-pipeline-implementation">Production Pipeline Implementation<a class="anchor" aria-label="anchor" href="#production-pipeline-implementation"></a>
@@ -585,7 +585,7 @@ discovery studies.</p>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##  [1] SummarizedExperiment_1.40.0 gtable_0.3.6               </span></span>
 <span><span class="co">##  [3] rjson_0.2.23                xfun_0.56                  </span></span>
-<span><span class="co">##  [5] bslib_0.9.0                 lattice_0.22-7             </span></span>
+<span><span class="co">##  [5] bslib_0.10.0                lattice_0.22-7             </span></span>
 <span><span class="co">##  [7] Biobase_2.70.0              vctrs_0.7.1                </span></span>
 <span><span class="co">##  [9] tools_4.5.2                 bitops_1.0-9               </span></span>
 <span><span class="co">## [11] generics_0.1.4              stats4_4.5.2               </span></span>

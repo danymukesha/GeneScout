@@ -27,12 +27,16 @@
   : Plot Candidate ORFs
 - [`plot_entropy_profile()`](https://danymukesha.github.io/GeneScout/reference/plot_entropy_profile.md)
   : Plot Entropy Profile
+- [`plot_codon_usage_panel()`](https://danymukesha.github.io/GeneScout/reference/plot_codon_usage_panel.md)
+  : Plot Codon Usage Bias and RSCU in a Unified Panel
 - [`extract_known_genes()`](https://danymukesha.github.io/GeneScout/reference/extract_known_genes.md)
   : Extract Known Genes from GTF/GFF File
 - [`create_reference_profile()`](https://danymukesha.github.io/GeneScout/reference/create_reference_profile.md)
   : Create Reference Codon Profile
 - [`sliding_window_scan()`](https://danymukesha.github.io/GeneScout/reference/sliding_window_scan.md)
   : Sliding Window Entropy Scan
+- [`translate_codons()`](https://danymukesha.github.io/GeneScout/reference/translate_codons.md)
+  : Translate Codons to Amino Acids
 
 ## Helper Functions
 
@@ -48,6 +52,10 @@
   : Validate DNA Sequence
 - [`read_fasta()`](https://danymukesha.github.io/GeneScout/reference/read_fasta.md)
   : Read FASTA File
+- [`.get_codon_aa_map()`](https://danymukesha.github.io/GeneScout/reference/dot-get_codon_aa_map.md)
+  : Mapping amino acids to their corresponding codons
+- [`codon_frequency_df()`](https://danymukesha.github.io/GeneScout/reference/codon_frequency_df.md)
+  : Convert Codon Frequency Vector to Tidy Data Frame
 
 ## Data
 

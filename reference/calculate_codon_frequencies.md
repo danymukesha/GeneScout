@@ -5,7 +5,7 @@ Calculate the frequency distribution of all 64 codons in a DNA sequence.
 ## Usage
 
 ``` r
-calculate_codon_frequencies(sequence, normalize = TRUE)
+calculate_codon_frequencies(sequence, normalize = TRUE, remove_zeros = FALSE)
 ```
 
 ## Arguments
@@ -17,6 +17,11 @@ calculate_codon_frequencies(sequence, normalize = TRUE)
 - normalize:
 
   Boolean indicating whether to normalize frequencies (default: TRUE)
+
+- remove_zeros:
+
+  Boolean should REMOVE codons with zero frequency if TRUE. Default set
+  to TRUE.
 
 ## Value
 

@@ -13,10 +13,12 @@
 <url><loc>https://danymukesha.github.io/GeneScout/reference/calculate_kl_divergence.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/calculate_rscu.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/calculate_shannon_entropy.html</loc></url>
+<url><loc>https://danymukesha.github.io/GeneScout/reference/codon_frequency_df.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/compare_entropy_profiles.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/create_reference_profile.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/dot-adjust_codon_length.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/dot-get_all_codons.html</loc></url>
+<url><loc>https://danymukesha.github.io/GeneScout/reference/dot-get_codon_aa_map.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/dot-get_window_coords.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/dot-parse_gtf_line.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/dot-validate_dna.html</loc></url>
@@ -26,8 +28,10 @@
 <url><loc>https://danymukesha.github.io/GeneScout/reference/find_orfs_in_sequence.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/index.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/plot_candidate_orfs.html</loc></url>
+<url><loc>https://danymukesha.github.io/GeneScout/reference/plot_codon_usage_panel.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/plot_entropy_profile.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/read_fasta.html</loc></url>
 <url><loc>https://danymukesha.github.io/GeneScout/reference/sliding_window_scan.html</loc></url>
+<url><loc>https://danymukesha.github.io/GeneScout/reference/translate_codons.html</loc></url>
 </urlset>
 
