@@ -66,29 +66,51 @@ devtools::install_github("danymukesha/GeneScout")
 
 ## Quick Start
 
-```r
+```{r create-ref-profile}
 library(GeneScout)
 
 # Create a reference profile from known genes
-known_genes <- c("ATGATGATG", "GCCGCCGCC", "TTATTATTA")
-ref_profile <- create_reference_profile(known_genes)
+fasta_tp53 <- system.file("extdata", "TP53.fasta.gz", package = "GeneScout")
+fasta_apoe <- system.file("extdata", "APOE.fasta.gz", package = "GeneScout")
 
+known_genes <- c(
+  APOE = read_fasta(fasta_apoe)[[1]],
+  TP53 = read_fasta(fasta_tp53)[[1]]
+)
+known_genes
+
+ref_profile <- create_reference_profile(read_fasta(fasta_apoe))
+ref_profile
+```
+
+```{r visualize-freqs, fig.height=6, fig.width = 10}
+df <- GeneScout::codon_frequency_df(ref_profile)
+plot_codon_usage_panel(df)
+# ggsave(filename = "inst/apoe.png", 
+#        plot_codon_usage_panel(df), 
+#        height = 8, width = 12)
+```
+
+```{r scan-geno-seq}
 # Scan a genomic sequence
-sequence <- paste(rep("ATGATGATGTTATTATTACGCCGCCGCC", 30), collapse = "")
+fasta_chr19 <- system.file("extdata", "chr19.fasta.gz", package = "GeneScout")
+sequence <- read_fasta(fasta_chr19)[[30]]
+sequence
+
 scan_result <- sliding_window_scan(
   sequence,
   window_size = 300,
   step_size = 30,
   reference_profile = ref_profile
 )
+scan_result
+```
 
-# Detect entropy peaks
+```{r detect-entropy}
+# Detect entropy peaks and find candidate ORFs
 peaks <- entropy_peak_detection(scan_result, threshold = 0.1)
-
-# Find candidate ORFs
 candidates <- find_candidate_orfs(sequence, scan_result, peaks)
 
-# Visualize results
 plot_candidate_orfs(scan_result, candidates, peaks)
 ```
 
@@ -119,21 +141,25 @@ There are different use cases, few of them would be:
 5.  **Evolutionary studies**: to analze codon usage patterns across
     lineages
 
-## Large-Scale Analysis
+<!-- ## Large-Scale Analysis -->
 
-For comprehensive chromosome-scale analysis examples, see:
-- **`chr19-large-scale-analysis.Rmd`**: Full chromosome 19 analysis with APOE/TP53 references
-- **`gencode-chr19-analysis.Rmd`**: Production-ready GENCODE-informed analysis (recommended)
-- **Memory-optimized processing** for genome-wide studies
-- **Performance benchmarking** and efficiency metrics
-- **Publication-ready visualizations** with biological context
+<!-- For chromosome-scale analysis examples, see: -->
 
-### GENCODE Integration
-GeneScout now supports **GENCODE protein-coding transcripts** for:
-- **Comprehensive human reference**: 93,000+ curated transcripts
-- **Robust codon bias patterns**: Organism-specific analysis
-- **Scientifically rigorous**: High-quality annotation standards
-- **Production pipelines**: Scalable chromosome-level analysis
+<!-- - **`chr19-large-scale-analysis.Rmd`**: Full chromosome 19 analysis with APOE/TP53 references -->
+<!-- - **`gencode-chr19-analysis.Rmd`**: GENCODE-informed analysis (recommended) -->
+<!-- - **Memory-optimized processing** for genome-wide studies -->
+<!-- - **Performance benchmarking** and efficiency metrics -->
+<!-- - **Visualizations** with biological context  -->
+
+<!-- ### GENCODE Integration -->
+
+<!-- GeneScout now supports **GENCODE protein-coding transcripts** for: -->
+
+<!-- - **Human reference**: 93,000+ curated transcripts -->
+<!-- - **Robust codon bias patterns**: Organism-specific analysis -->
+<!-- - **Scientifically rigorous**: High-quality annotation standards -->
+<!-- - **Production pipelines**: Scalable chromosome-level analysis -->
+
 ## Acknowledgments
 
 Built on top of Bioconductor's excellent `Biostrings`, and `coRdon` packages.

@@ -50,9 +50,11 @@ reference:
       - find_candidate_orfs
       - plot_candidate_orfs
       - plot_entropy_profile
+      - plot_codon_usage_panel
       - extract_known_genes
       - create_reference_profile
       - sliding_window_scan
+      - translate_codons
 
   - title: "Helper Functions"
     contents:
@@ -62,6 +64,9 @@ reference:
       - .parse_gtf_line
       - .validate_dna
       - read_fasta
+      - .get_codon_aa_map
+      - codon_frequency_df 
+      
   - title: "Data"
     contents:
       - GeneScout-extdata

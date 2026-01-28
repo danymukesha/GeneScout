@@ -4,12 +4,15 @@
 \alias{calculate_codon_frequencies}
 \title{Calculate Codon Frequencies}
 \usage{
-calculate_codon_frequencies(sequence, normalize = TRUE)
+calculate_codon_frequencies(sequence, normalize = TRUE, remove_zeros = FALSE)
 }
 \arguments{
 \item{sequence}{Character string or DNAString object representing DNA sequence}
 
 \item{normalize}{Boolean indicating whether to normalize frequencies (default: TRUE)}
+
+\item{remove_zeros}{Boolean should REMOVE codons with zero frequency if TRUE.
+Default set to TRUE.}
 }
 \value{
 Named numeric vector of codon frequencies

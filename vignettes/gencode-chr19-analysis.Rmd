@@ -76,7 +76,7 @@ df <- data.frame(
     frequency = as.numeric(gencode_ref_profile)
 )
 
-df$aa <- sapply(df$codon, function(x) seqinr::translate(s2c(x)))
+df$aa <- GeneScout::translate_codons(as.character(df$codon))
 df$codon <- factor(df$codon, levels = df$codon)
 ```
 

@@ -4,12 +4,15 @@
 #'
 #' @param sequence Character string or DNAString object representing DNA sequence
 #' @param normalize Boolean indicating whether to normalize frequencies (default: TRUE)
+#' @param remove_zeros Boolean should REMOVE codons with zero frequency if TRUE.
+#' Default set to TRUE.
 #' @return Named numeric vector of codon frequencies
 #' @export
 #' @examples
 #' sequence <- "ATGATGATGTTATTATTACGCCGCCGCC"
 #' frequencies <- calculate_codon_frequencies(sequence)
-calculate_codon_frequencies <- function(sequence, normalize = TRUE) {
+calculate_codon_frequencies <- function(sequence, normalize = TRUE,
+                                        remove_zeros = FALSE) {
     if (inherits(sequence, "DNAString")) {
         sequence <- Biostrings::toString(sequence)
     }
@@ -50,6 +53,9 @@ calculate_codon_frequencies <- function(sequence, normalize = TRUE) {
         }
     }
 
+    if (remove_zeros) {
+        full_table <- full_table[full_table > 0]
+    }
     full_table
 }
 
@@ -281,6 +287,40 @@ calculate_enc <- function(frequencies) {
         ifelse(is.finite(F6), 3 / F6, 0)
 
     min(ENC, 61)
+}
+
+
+#' Translate Codons to Amino Acids
+#'
+#' Translate DNA codons into single-letter amino acid codes
+#' using the standard genetic code.
+#'
+#' @param codons Character vector of codons (e.g. "ATG", "GCC")
+#' @return Character vector of amino acids (single-letter codes, "*" for stop)
+#' @export
+#'
+#' @examples
+#' translate_codons(c("ATG", "TAA", "GCC"))
+translate_codons <- function(codons) {
+    codons <- toupper(codons)
+
+    if (any(nchar(codons) != 3)) {
+        stop("All codons must be exactly 3 nucleotides long")
+    }
+
+    if (any(!grepl("^[ACGT]{3}$", codons))) {
+        stop("Codons must contain only A, C, G, T")
+    }
+
+    aa_map <- .get_codon_aa_map()
+
+    aa <- unname(aa_map[codons])
+
+    if (any(is.na(aa))) {
+        stop("Unknown codon encountered")
+    }
+
+    aa
 }
 
 

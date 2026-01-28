@@ -188,16 +188,14 @@ plot_candidate_orfs <- function(scan_result,
 
     if (!is.null(peaks) && nrow(peaks) > 0) {
         for (i in 1:nrow(peaks)) {
-            p <- p + ggplot2::geom_rect(
-                ggplot2::aes(
-                    xmin = peaks$start_bp[i],
-                    xmax = peaks$end_bp[i],
-                    ymin = -Inf,
-                    ymax = Inf
-                ),
-                fill = "#F18F01",
+            p <- p + ggplot2::annotate(
+                "rect",
+                xmin = peaks$start_bp[i],
+                xmax = peaks$end_bp[i],
+                ymin = -Inf,
+                ymax = Inf,
                 alpha = 0.15,
-                inherit.aes = FALSE
+                fill = "#F18F01"
             )
         }
     }
@@ -241,6 +239,135 @@ plot_candidate_orfs <- function(scan_result,
             )
     }
 
-
     return(p)
+}
+
+#' Plot Codon Usage Bias and RSCU in a Unified Panel
+#'
+#' This function generates a clean, publication-ready multi-panel visualization
+#' summarizing codon usage bias and relative synonymous codon usage (RSCU).
+#' The figure integrates absolute usage, codon-level RSCU, and amino-acid-level
+#' RSCU distributions while avoiding redundant encodings.
+#'
+#' @param df A data.frame or tibble with columns:
+#'   \itemize{
+#'     \item \code{codon}: character, codon sequence (e.g. "AAA")
+#'     \item \code{frequency}: numeric, codon usage frequency
+#'     \item \code{aa}: character, translated amino acid (single-letter code)
+#'   }
+#'
+#' @return A patchwork object combining three ggplot panels.
+#'
+#' @details
+#' Panels included:
+#' \enumerate{
+#'   \item Absolute codon usage aggregated by amino acid
+#'   \item Relative synonymous codon usage (RSCU) per codon, faceted by amino acid
+#'   \item Distribution of RSCU values per amino acid
+#' }
+#'
+#' RSCU is computed as:
+#' \deqn{RSCU = \frac{f_{codon}}{mean(f_{synonymous})}}
+#'
+#' @import ggplot2
+#' @import dplyr
+#' @import patchwork
+#'
+#' @examples
+#' \dontrun{
+#' plot_codon_usage_panel(df)
+#' }
+#'
+#' @export
+plot_codon_usage_panel <- function(df) {
+    stopifnot(
+        is.data.frame(df),
+        all(c("codon", "frequency", "aa") %in% colnames(df)),
+        is.numeric(df$frequency),
+        all(df$frequency >= 0)
+    )
+
+    df <- df |>
+        dplyr::mutate(
+            codon = factor(codon),
+            aa    = factor(aa)
+        )
+
+    df_rscu <- df |>
+        dplyr::group_by(aa) |>
+        dplyr::mutate(
+            rscu = frequency / mean(frequency)
+        ) |>
+        dplyr::ungroup()
+
+    p1 <- ggplot2::ggplot(df, ggplot2::aes(x = aa, y = frequency)) +
+        ggplot2::geom_col(
+            fill = "grey40",
+            width = 0.7
+        ) +
+        ggplot2::theme_classic(base_size = 11) +
+        ggplot2::labs(
+            title = "A. Absolute codon usage by amino acid",
+            y = "Codon frequency",
+            x = NULL
+        )
+
+    p2 <- ggplot2::ggplot(df_rscu, ggplot2::aes(x = codon, y = rscu)) +
+        ggplot2::geom_col(
+            fill = "grey30",
+            width = 0.8
+        ) +
+        ggplot2::geom_hline(
+            yintercept = 1,
+            linetype = "dashed",
+            linewidth = 0.3,
+            colour = "black"
+        ) +
+        ggplot2::facet_wrap(
+            ~aa,
+            scales = "free_x",
+            ncol = 5
+        ) +
+        ggplot2::theme_minimal(base_size = 10) +
+        ggplot2::theme(
+            panel.grid = ggplot2::element_blank(),
+            axis.text.x = ggplot2::element_text(angle = 90, size = 6),
+            axis.title = ggplot2::element_blank(),
+            strip.text = ggplot2::element_text(face = "bold")
+        ) +
+        ggplot2::labs(
+            title = "B. Relative synonymous codon usage (RSCU)",
+            subtitle = "Dashed line indicates equal synonymous usage (RSCU = 1)"
+        )
+
+    p3 <- ggplot2::ggplot(df_rscu, ggplot2::aes(x = aa, y = rscu)) +
+        ggplot2::geom_boxplot(
+            fill = "grey85",
+            width = 0.6,
+            outlier.shape = NA
+        ) +
+        ggplot2::geom_jitter(
+            width = 0.15,
+            size = 1,
+            alpha = 0.6
+        ) +
+        ggplot2::geom_hline(
+            yintercept = 1,
+            linetype = "dashed",
+            linewidth = 0.3
+        ) +
+        ggplot2::theme_classic(base_size = 11) +
+        ggplot2::labs(
+            title = "C. Distribution of RSCU across amino acids",
+            y = "RSCU",
+            x = NULL
+        )
+
+    patchwork::wrap_plots(
+        p1, p2, p3,
+        design = "
+    AB
+    CB
+    "
+    )
 }

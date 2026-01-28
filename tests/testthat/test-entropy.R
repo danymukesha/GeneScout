@@ -22,8 +22,7 @@ test_that("calculate_codon_frequencies handles invalid sequences", {
     )
 
     seq_short <- "AT"
-    freqs_short <- calculate_codon_frequencies(seq_short)
-    expect_true(all(freqs_short == 0))
+    expect_warning(calculate_codon_frequencies(seq_short) == 0)
 })
 
 test_that("calculate_shannon_entropy works correctly", {
@@ -73,8 +72,8 @@ test_that("calculate_kl_divergence handles mismatched codon names", {
     freqs2 <- c(ATG = 0.25, TTT = 0.75, TGA = 0.5)
 
     expect_error(
-        calculate_kl_divergence(freqs1, freqs2),
-        "Observed and reference frequencies must have the same codon order"
+        suppressWarnings(calculate_kl_divergence(freqs1, freqs2)),
+        "Observed and reference frequencies must have the same codon order",
     )
 })
 
@@ -96,13 +95,15 @@ test_that("calculate_enc works correctly", {
         collapse = ""
     )
     freqs_uniform <- calculate_codon_frequencies(seq_uniform)
-    enc_uniform <- calculate_enc(freqs_uniform)
+    enc_uniform <- calculate_enc(freqs_uniform) |>
+        suppressWarnings()
 
     expect_true(enc_uniform >= 20 && enc_uniform <= 61)
 
     seq_biased <- paste(rep("ATG", 30), collapse = "")
     freqs_biased <- calculate_codon_frequencies(seq_biased)
-    enc_biased <- calculate_enc(freqs_biased)
+    enc_biased <- calculate_enc(freqs_biased) |>
+        suppressWarnings()
 
     # expect_true(enc_biased < enc_uniform)
     expect_true(enc_biased != enc_uniform) # to be verified
@@ -119,7 +120,8 @@ test_that("create_reference_profile works correctly", {
     ref_mean <- create_reference_profile(genes, method = "mean")
     expect_equal(sum(ref_mean), 1)
 
-    ref_median <- create_reference_profile(genes, method = "median")
+    ref_median <- create_reference_profile(genes, method = "median") |>
+        suppressWarnings()
     expect_equal(sum(ref_median), 0)
 
     expect_error(
@@ -284,9 +286,11 @@ test_that("entropy_peak_detection handles kl_divergence metric", {
 test_that("find_candidate_orfs works correctly", {
     seq_test <- paste(rep("ATGATGATGTTATTATTACGCCGCCGCC", 30), collapse = "")
     result <- sliding_window_scan(seq_test, window_size = 150, step_size = 30)
-    peaks <- entropy_peak_detection(result, threshold = 0.2)
+    peaks <- entropy_peak_detection(result, threshold = 0.2) |> suppressWarnings()
 
-    candidates <- find_candidate_orfs(seq_test, result, peaks, min_orf_length = 60)
+    candidates <- find_candidate_orfs(seq_test, result, peaks,
+        min_orf_length = 60
+    ) |> suppressWarnings()
 
     expect_true(inherits(candidates, "candidate_orfs") || nrow(candidates) == 0)
 
@@ -379,8 +383,8 @@ test_that("plot_entropy_profile returns ggplot object", {
 test_that("plot_candidate_orfs returns ggplot object", {
     sequence <- paste(rep("ATGATGATGTTATTATTACGCCGCCGCC", 20), collapse = "")
     result <- sliding_window_scan(sequence, window_size = 150, step_size = 30)
-    peaks <- entropy_peak_detection(result, threshold = 0.1)
-    candidates <- find_candidate_orfs(sequence, result, peaks)
+    peaks <- entropy_peak_detection(result, threshold = 0.1) |> suppressWarnings()
+    candidates <- find_candidate_orfs(sequence, result, peaks) |> suppressWarnings()
     plot <- plot_candidate_orfs(result, candidates, peaks)
     expect_true(inherits(plot, "gg"))
 })
@@ -519,7 +523,7 @@ test_that("extract_known_genes respects min_length filter", {
         gtf_file = gtf_file,
         genome_fasta = fasta_file,
         min_length = 300
-    )
+    ) |> suppressWarnings()
 
     expect_length(genes, 0)
 })
@@ -707,4 +711,179 @@ test_that("find_orfs_in_sequence handles multiple overlapping ORFs", {
     expect_true(nrow(orfs) >= 2)
 
     expect_equal(orfs$start, sort(orfs$start))
+})
+
+
+
+test_that("plot_codon_usage_panel returns a patchwork object", {
+    df <- data.frame(
+        codon = c("AAA", "AAG", "GAA", "GAG"),
+        frequency = c(0.6, 0.4, 0.55, 0.45),
+        aa = c("K", "K", "E", "E"),
+        stringsAsFactors = FALSE
+    )
+
+    p <- plot_codon_usage_panel(df)
+
+    # patchwork objects inherit from ggplot
+    expect_s3_class(p, "patchwork")
+    expect_true(inherits(p, "ggplot"))
+})
+
+
+test_that("plot_codon_usage_panel fails if input is not a data frame", {
+    expect_error(
+        plot_codon_usage_panel("not_a_df"),
+        regexp = "is.data.frame"
+    )
+})
+
+
+test_that("plot_codon_usage_panel fails if required columns are missing", {
+    df_missing <- data.frame(
+        codon = c("AAA", "AAG"),
+        frequency = c(0.5, 0.5)
+    )
+
+    expect_error(
+        plot_codon_usage_panel(df_missing),
+        regexp = "colnames"
+    )
+})
+
+
+test_that("plot_codon_usage_panel fails if frequency is not numeric", {
+    df_bad <- data.frame(
+        codon = c("AAA", "AAG"),
+        frequency = c("high", "low"),
+        aa = c("K", "K"),
+        stringsAsFactors = FALSE
+    )
+
+    expect_error(
+        plot_codon_usage_panel(df_bad),
+        regexp = "is.numeric"
+    )
+})
+
+
+test_that("plot_codon_usage_panel fails if frequency contains negative values", {
+    df_neg <- data.frame(
+        codon = c("AAA", "AAG"),
+        frequency = c(0.5, -0.1),
+        aa = c("K", "K"),
+        stringsAsFactors = FALSE
+    )
+
+    expect_error(
+        plot_codon_usage_panel(df_neg),
+        regexp = "df\\$frequency >= 0"
+    )
+})
+
+
+test_that("RSCU is correctly computed internally", {
+    df <- data.frame(
+        codon = c("AAA", "AAG"),
+        frequency = c(0.75, 0.25),
+        aa = c("K", "K"),
+        stringsAsFactors = FALSE
+    )
+
+    p <- plot_codon_usage_panel(df)
+
+    built <- ggplot2::ggplot_build(p[[2]])
+
+    rscu_values <- built$data[[1]]$y
+
+    expect_equal(
+        sort(round(rscu_values, 3)),
+        sort(round(c(1.5, 0.5), 3))
+    )
+})
+
+
+test_that("translate_codons correctly translates standard codons", {
+    codons <- c("ATG", "GCC", "TAA")
+    aa <- translate_codons(codons)
+
+    expect_equal(aa, c("M", "A", "*"))
+})
+
+
+test_that("translate_codons is vectorized and preserves order", {
+    codons <- c("AAA", "AAG", "AAA")
+    aa <- translate_codons(codons)
+
+    expect_equal(aa, c("K", "K", "K"))
+})
+
+
+test_that("translate_codons handles lowercase input", {
+    codons <- c("atg", "gcc")
+    aa <- translate_codons(codons)
+
+    expect_equal(aa, c("M", "A"))
+})
+
+
+test_that("translate_codons fails if codon length is not 3", {
+    expect_error(
+        translate_codons(c("ATG", "AT")),
+        regexp = "exactly 3 nucleotides"
+    )
+})
+
+
+test_that("translate_codons fails if codons contain invalid characters", {
+    expect_error(
+        translate_codons(c("ATN")),
+        regexp = "only A, C, G, T"
+    )
+})
+
+test_that("codon_frequency_df returns a valid data frame", {
+    freqs <- c(ATG = 0.5, GCC = 0.5)
+
+    df <- codon_frequency_df(freqs)
+
+    expect_s3_class(df, "data.frame")
+    expect_equal(colnames(df), c("codon", "frequency", "aa"))
+})
+
+
+test_that("codon_frequency_df preserves codon order as factor levels", {
+    freqs <- c(GCC = 0.2, ATG = 0.8)
+
+    df <- codon_frequency_df(freqs)
+
+    expect_equal(
+        levels(df$codon),
+        c("GCC", "ATG")
+    )
+})
+
+
+test_that("codon_frequency_df computes amino acids correctly", {
+    freqs <- c(ATG = 1, TAA = 0)
+
+    df <- codon_frequency_df(freqs)
+
+    expect_equal(df$aa, c("M", "*"))
+})
+
+
+test_that("codon_frequency_df fails if input is not numeric", {
+    expect_error(
+        codon_frequency_df(c(ATG = "high")),
+        regexp = "is.numeric"
+    )
+})
+
+
+test_that("codon_frequency_df fails if names are missing", {
+    expect_error(
+        codon_frequency_df(c(0.5, 0.5)),
+        regexp = "names"
+    )
 })

@@ -13,6 +13,9 @@ export(find_candidate_orfs)
 export(plot_entropy_profile)
 export(compare_entropy_profiles)
 export(plot_candidate_orfs)
+export(codon_frequency_df)
+export(translate_codons)
+export(plot_codon_usage_panel)
 
 # Import from Biostrings
 importFrom(Biostrings, readDNAStringSet)
